@@ -15,8 +15,8 @@ from pygame.locals import (
 
 pygame.init()
 
-SCREEN_HEIGHT = 960
-SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 700
+SCREEN_WIDTH = 1080
 
 # Set up the drawing window
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
