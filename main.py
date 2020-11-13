@@ -12,6 +12,7 @@ from pygame.locals import (
     KEYDOWN,
     QUIT,
 )
+white = (255, 255, 255)
 
 pygame.init()
 
@@ -22,6 +23,13 @@ SCREEN_WIDTH = 1080
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 
 player = player.Player()
+
+clock = pygame.time.Clock()
+
+font = pygame.font.Font('freesansbold.ttf', 32)
+text = font.render('Im Sorry', True, white)
+textRect = text.get_rect()
+textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
 # Run until the user asks to quit
 running = True
@@ -40,8 +48,11 @@ while running:
             running = False
 
     player.move(pygame.key.get_pressed(), SCREEN_HEIGHT, SCREEN_WIDTH)
+    screen.blit(text, textRect)
     player.update(screen)
     pygame.display.flip()
     screen.fill((0, 0, 0))
+
+    clock.tick(30)
 # Done! Time to quit.
 pygame.quit()

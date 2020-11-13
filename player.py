@@ -1,4 +1,5 @@
 import pygame
+import animator
 
 from pygame.locals import (
     K_UP,
@@ -15,34 +16,26 @@ from pygame.locals import (
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.image.load('Media/characters/turtle/turtle right 1.png').convert()
+        self.animator = animator.Animator(pathname='Media/characters/turtle2')
+        self.surf = self.animator.get_next('right')
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
-        self.images = [[pygame.image.load('Media/characters/turtle/turtle right 1.png').convert(),
-                        pygame.image.load('Media/characters/turtle/turtle right 3.png').convert()],
-                       [pygame.image.load('Media/characters/turtle/turtle right 2.png').convert(),
-                        pygame.image.load('Media/characters/turtle/turtle right 4.png').convert()]]
-        self.index = 0
+
 
     def update(self, screen):
         screen.blit(self.surf, self.rect)
 
     def move(self, pressed_keys, h, w):
         if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -1)
+            self.rect.move_ip(0, -5)
         if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, 1)
+            self.rect.move_ip(0, 5)
         if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-1, 0)
-            self.index += 1
-            if self.index >= len(self.images):
-                self.index = 0
-            self.image = self.images[0][self.index]
+            self.surf = self.animator.get_next('left',0.5)
+            self.rect.move_ip(-5, 0)
         if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(1, 0)
-            if self.index >= len(self.images):
-                self.index = 0
-            self.image = self.images[1][self.index]
+            self.surf = self.animator.get_next('right',0.5)
+            self.rect.move_ip(5, 0)
 
         if self.rect.left < 0:
             self.rect.left = 0
