@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b74b88e4-a3ac-4a14-ae44-d90db83dff1b" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1kCKhFnw0NzHoIyXZLfCtH6BHiL" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\tigey\Documents\GitHub\softdes_game\Media\backgrounds\nightsky\main" />
+      <recent name="C:\Users\tigey\Documents\GitHub\softdes_game\Media\backgrounds" />
+      <recent name="C:\Users\tigey\Documents\GitHub\softdes_game\Media" />
+      <recent name="C:\Users\tigey\Documents\GitHub\softdes_game\Media\rooms\innlobby\main" />
+      <recent name="C:\Users\tigey\Documents\GitHub\softdes_game\Media\characters\turtle\left" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -30,5 +62,38 @@
         <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b74b88e4-a3ac-4a14-ae44-d90db83dff1b" name="Default Changelist" comment="" />
+      <created>1605199250836</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1605199250836</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="202" y="83" width="1089" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1605199365182">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="202" y="83" width="1089" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.864@0.0.1536.864" timestamp="1605199365182" />
+    <state width="1515" height="223" key="GridCell.Tab.0.bottom" timestamp="1605643767459">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1515" height="223" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1605643767458" />
+    <state width="1515" height="223" key="GridCell.Tab.0.center" timestamp="1605643767458">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1515" height="223" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1605643767458" />
+    <state width="1515" height="223" key="GridCell.Tab.0.left" timestamp="1605643767458">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1515" height="223" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1605643767458" />
+    <state width="1515" height="223" key="GridCell.Tab.0.right" timestamp="1605643767458">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1515" height="223" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1605643767458" />
   </component>
 </project>

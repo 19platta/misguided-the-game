@@ -1,13 +1,9 @@
 
 import pygame
 import player
-import room
+import environment
 
 from pygame.locals import (
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
     K_ESCAPE,
     KEYDOWN,
     QUIT,
@@ -16,20 +12,21 @@ white = (255, 255, 255)
 
 pygame.init()
 
-SCREEN_HEIGHT = 700
-SCREEN_WIDTH = 1080
+# 500 / 250 / 125 room height
+SCREEN_HEIGHT = 700 #350 or 175
+SCREEN_WIDTH = 1080 #540 or 270
 
 # Set up the drawing window
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 
-player = player.Player()
 
+room = environment.Room('innlobby')
+player = player.Player(room)
+player.spawn(room)
+background = environment.Background('daysky')
 clock = pygame.time.Clock()
 
-font = pygame.font.Font('freesansbold.ttf', 32)
-text = font.render('Im Sorry', True, white)
-textRect = text.get_rect()
-textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+#room1 = room.Room('room1')
 
 # Run until the user asks to quit
 running = True
@@ -47,8 +44,10 @@ while running:
         elif event.type == QUIT:
             running = False
 
-    player.move(pygame.key.get_pressed(), SCREEN_HEIGHT, SCREEN_WIDTH)
-    screen.blit(text, textRect)
+
+    background.update(screen)
+    room.update(screen)
+    player.move(pygame.key.get_pressed())
     player.update(screen)
     pygame.display.flip()
     screen.fill((0, 0, 0))
