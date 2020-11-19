@@ -22,7 +22,7 @@ class Animator:
 
     def get_next(self, type):
         """
-        
+
         Args:
             type:
 
