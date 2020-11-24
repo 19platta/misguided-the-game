@@ -198,3 +198,15 @@ class Chatbox(pygame.sprite.Sprite):
                 # Increment line height so text doesn't print on top of itself
                 i += 15
 
+
+class Guide:
+    """
+
+    """
+    def __init__(self):
+
+        self.animator = animator.Animator(pathname='Media/misc/Guide',
+                                          types=['openclose', 'close', 'open', 'not'],
+                                          speed=0.5)
+
+

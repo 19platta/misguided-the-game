@@ -1,6 +1,7 @@
 import pygame
 import character
 import environment
+import os
 
 from pygame.locals import (
     K_ESCAPE,
@@ -14,8 +15,8 @@ class Game:
 
     def __init__(self):
         # 500 / 250 / 125 room height
-        SCREEN_HEIGHT = 700  # 350 or 175
-        SCREEN_WIDTH = 1080  # 540 or 270
+        SCREEN_HEIGHT = 700  # 350 or 175 or 88
+        SCREEN_WIDTH = 1080  # 540 or 270 or 135
 
         # Set up the drawing window
         self.screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
@@ -29,17 +30,30 @@ class Game:
         self.npc = character.NPC('turtle')
 
     def intro(self):
+        #pygame.mixer.music.load('Media/music/Theme_Fast.mp3')
+        #pygame.mixer.music.play()
         intro = pygame.image.load("Media/wallpaper/copepod-studios.png")
+        credit = True
         for i in range(225):
             intro.set_alpha(i)
             self.screen.blit(intro, [265, 200])
             pygame.display.flip()
-            self.clock.tick(50)
-        while True:
+            self.clock.tick(35)
+        self.clock.tick(60)
+        filelist = os.listdir('Media/wallpaper/introsequence')
+        for file in filelist:
+            intro = pygame.image.load('Media/wallpaper/introsequence/'+file)
+            self.screen.blit(intro, [0, 0])
+            pygame.display.flip()
+            self.clock.tick(6)
+        pygame.event.clear()
+        while credit == True:
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
-                    return
+                    credit = False
             self.clock.tick(30)
+
+
 
     def update(self):
         self.background.update(self.screen)
@@ -70,7 +84,7 @@ class Game:
 
             self.player.move(pygame.key.get_pressed())
             self.update()
-            # room.draw_objects(screen)
+            #self.room.draw_objects(self.screen)
             pygame.display.flip()
             self.screen.fill((0, 0, 0))
 
