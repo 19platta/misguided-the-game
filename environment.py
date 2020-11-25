@@ -13,17 +13,6 @@ class Background(helpers.DataSprite):
     def __init__(self, data):
         super(Background, self).__init__(data, 'backgrounds/')
 
-    def update(self, screen):
-        """
-        Update the Background on a screen and animates it
-
-        Args:
-            screen: the surface to update to.
-
-        """
-        self.surf = self.animator.get_next('main')
-        screen.blit(self.surf, self.rect)
-
 
 class Room(helpers.DataSprite):
     """

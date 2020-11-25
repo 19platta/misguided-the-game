@@ -14,10 +14,12 @@ class Animator:
                  types=['left', 'right'], speed=0.5):
         self.images = {}
         self.index = {}
+
         for type in types:
             self.images[type] = []
             self.index[type] = 0
-            for filename in os.listdir(pathname + '/' + type):
+            print(sorted(os.listdir(pathname + '/' + type)))
+            for filename in sorted(os.listdir(pathname + '/' + type)):
                 img = pygame.image.load(os.path.join(pathname, type, filename))
                 self.images[type].append(Surface.convert_alpha(img))
         self.update_speed = speed
@@ -71,3 +73,14 @@ class DataSprite(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(
             left=int(self.datafile.loc['place', '2']),
             top=int(self.datafile.loc['place', '3']))
+
+    def update(self, screen):
+        """
+        Update the Background on a screen and animates it
+
+        Args:
+            screen: the surface to update to.
+
+        """
+        self.surf = self.animator.get_next('main')
+        screen.blit(self.surf, self.rect)

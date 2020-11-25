@@ -40,7 +40,7 @@ class Game:
             pygame.display.flip()
             self.clock.tick(35)
         self.clock.tick(60)
-        filelist = os.listdir('Media/wallpaper/introsequence')
+        filelist = sorted(os.listdir('Media/wallpaper/introsequence'))
         for file in filelist:
             intro = pygame.image.load('Media/wallpaper/introsequence/'+file)
             self.screen.blit(intro, [0, 0])
