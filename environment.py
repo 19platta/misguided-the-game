@@ -1,40 +1,17 @@
 import pygame
-import pandas
-import animator
+import helpers
 from pygame.locals import RLEACCEL
 import math
 import textwrap
 
 
-class Background(pygame.sprite.Sprite):
+class Background(helpers.DataSprite):
     """
     A class designed to represent a background
         Extracts attributes from a csv file.
-
-    Attributes:
-        datafile: the datafile that defines all the stats, a dataframe
-        animator: the animator instance that animates the room graphics
-        surf: the room surface, displaying the room visually
-        rect: the boundary rectangle of the room
     """
-    def __init__(self, data, dir='backgrounds/'):
-        super(Background, self).__init__()
-
-        # Create path and read the .csv defining the background
-        path = 'Media/' + dir + data + '.csv'
-        self.datafile = pandas.read_csv(path, index_col=0)
-
-        # Assign the animator path and update speed to a new instance of Animator
-        self.animator = animator.Animator(
-            pathname='Media/'+ dir + self.datafile.loc['animator', '2'],
-            types=['main'], speed=float(self.datafile.loc['animator', '3']))
-
-        # Get the first frame of the animation and create the background surface
-        self.surf = self.animator.get_next('main')
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
-        self.rect = self.surf.get_rect(
-            left=int(self.datafile.loc['place', '2']),
-            top=int(self.datafile.loc['place', '3']))
+    def __init__(self, data):
+        super(Background, self).__init__(data, 'backgrounds/')
 
     def update(self, screen):
         """
@@ -48,23 +25,24 @@ class Background(pygame.sprite.Sprite):
         screen.blit(self.surf, self.rect)
 
 
-class Room(Background):
+class Room(helpers.DataSprite):
     """
     A class representing a room, inheriting from Background
 
     Attributes:
-        same as background, but with the addition of
         spawn: the location designated as a player spawn, as a list x,y
         borders: the rectangular corners of a room [xmin, xmax, ymin, ymax]
         objects: a list of rects to use as obstacles that are impassable
     """
 
-    def __init__(self, data, dir='rooms/'):
-        ''' Initializes an instance of Room
-        :param data: the data file to use
-        :param dir: the directory (inside Media) to use
-        '''
-        super(Room, self).__init__(data, dir)
+    def __init__(self, data):
+        """
+        Initializes an instance of Room
+
+        Args:
+            data: the .csv file to use
+        """
+        super(Room, self).__init__(data, 'rooms/')
 
         self.spawn = [int(self.datafile.loc['spawn', '2']), int(self.datafile.loc['spawn', '3'])]
 
@@ -199,14 +177,14 @@ class Chatbox(pygame.sprite.Sprite):
                 i += 15
 
 
-class Guide:
+class Guide(helpers.DataSprite):
     """
 
     """
     def __init__(self):
-
-        self.animator = animator.Animator(pathname='Media/misc/Guide',
-                                          types=['openclose', 'close', 'open', 'not'],
-                                          speed=0.5)
+        super(Guide, self).__init__()
+        self.animator = helpers.Animator(pathname='Media/misc/Guide',
+                                         types=['openclose', 'close', 'open', 'not'],
+                                         speed=0.5)
 
 

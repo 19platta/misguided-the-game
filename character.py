@@ -1,5 +1,5 @@
 import pygame
-import animator
+import helpers
 import environment
 
 from pygame.locals import (
@@ -21,7 +21,7 @@ class Character(pygame.sprite.Sprite):
     """
     def __init__(self, img):
         super(Character, self).__init__()
-        self.animator = animator.Animator(pathname='Media/characters/' + img,
+        self.animator = helpers.Animator(pathname='Media/characters/' + img,
                                           speed=0.5)
         self.surf = self.animator.get_next('right')
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
