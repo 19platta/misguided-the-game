@@ -30,8 +30,8 @@ class Game:
         self.npc = character.NPC('turtle')
 
     def intro(self):
-        #pygame.mixer.music.load('Media/music/Theme_Fast.mp3')
-        #pygame.mixer.music.play()
+        pygame.mixer.music.load('Media/music/Theme_Fast.mp3')
+        pygame.mixer.music.play()
         intro = pygame.image.load("Media/wallpaper/copepod-studios.png")
         credit = True
         for i in range(225):

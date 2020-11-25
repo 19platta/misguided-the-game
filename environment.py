@@ -121,7 +121,7 @@ class Chatbox(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()
         self.phrase = ''
         self.index = 0
-        self.font = pygame.font.Font('Media/fonts/iAWriterduospace-Bold.otf', 15)
+        self.font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf', 15)
         self.sprite = sprite
 
     def say(self, phrase):
