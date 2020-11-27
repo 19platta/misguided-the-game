@@ -14,6 +14,7 @@ class Animator:
                  types=['left', 'right'], speed=0.5):
         self.images = {}
         self.index = {}
+        self.types = types
 
         for type in types:
             self.images[type] = []
@@ -24,7 +25,7 @@ class Animator:
                 self.images[type].append(Surface.convert_alpha(img))
         self.update_speed = speed
 
-    def get_next(self, type):
+    def get_next(self, type=''):
         """
 
         Args:
@@ -33,6 +34,8 @@ class Animator:
         Returns:
 
         """
+        if type == '':
+            type = self.types[0]
         self.index[type] += 1
         if math.floor(self.index[type]*self.update_speed) >= len(self.images[type]):
             self.index[type] = 0
@@ -68,11 +71,15 @@ class DataSprite(pygame.sprite.Sprite):
             types=['main'], speed=float(self.datafile.loc['animator', '3']))
 
         # Get the first frame of the animation and create the background surface
-        self.surf = self.animator.get_next('main')
+        self.surf = self.animator.get_next()
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
-        self.rect = self.surf.get_rect(
-            left=int(self.datafile.loc['place', '2']),
-            top=int(self.datafile.loc['place', '3']))
+        # If the file has 'place' set the rectangle to be at that place
+        if 'place' in self.datafile.index:
+            self.rect = self.surf.get_rect(
+                left=int(self.datafile.loc['place', '2']),
+                top=int(self.datafile.loc['place', '3']))
+        else:
+            self.rect = self.surf.get_rect()
 
     def update(self, screen):
         """
