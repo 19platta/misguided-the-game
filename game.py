@@ -84,7 +84,8 @@ class Game:
 
             self.player.move(pygame.key.get_pressed())
             self.update()
-            #self.room.draw_objects(self.screen)
+            # This line is for debugging boundaries
+            # self.room.draw_objects(self.screen)
             pygame.display.flip()
             self.screen.fill((0, 0, 0))
 

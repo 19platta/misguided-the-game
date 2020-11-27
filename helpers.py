@@ -10,20 +10,31 @@ class Animator:
     """
 
     """
-    def __init__(self, pathname='Media/characters/turtle',
-                 types=['left', 'right'], speed=0.5):
+    def __init__(self, pathname='Media/characters/turtle', speed=0.5):
         self.images = {}
         self.index = {}
-        self.types = types
+        self.types = []
 
-        for type in types:
+        with os.scandir(pathname) as it:
+            for entry in it:
+                if entry.is_dir():
+                    self.types.append(entry.name)
+
+        for type in self.types:
             self.images[type] = []
             self.index[type] = 0
             print(sorted(os.listdir(pathname + '/' + type)))
             for filename in sorted(os.listdir(pathname + '/' + type)):
                 img = pygame.image.load(os.path.join(pathname, type, filename))
                 self.images[type].append(Surface.convert_alpha(img))
+        self.current_type = self.types[0]
         self.update_speed = speed
+
+    def get_current_type(self):
+        """
+
+        """
+        return self.current_type
 
     def get_next(self, type=''):
         """
@@ -39,6 +50,7 @@ class Animator:
         self.index[type] += 1
         if math.floor(self.index[type]*self.update_speed) >= len(self.images[type]):
             self.index[type] = 0
+        self.current_type = type
         return self.images[type][math.floor(self.index[type]*self.update_speed)]
 
 
@@ -62,13 +74,13 @@ class DataSprite(pygame.sprite.Sprite):
         super(DataSprite, self).__init__()
 
         # Create path and read the .csv defining the background
-        path = 'Media/' + dir + data + '.csv'
+        path = 'Media/' + dir + data + "/" + data + '.csv'
         self.datafile = pandas.read_csv(path, index_col=0)
 
         # Assign the animator path and update speed to a new instance of Animator
         self.animator = Animator(
-            pathname='Media/' + dir + self.datafile.loc['animator', '2'],
-            types=['main'], speed=float(self.datafile.loc['animator', '3']))
+            pathname='Media/' + dir + data,
+            speed=float(self.datafile.loc['animator', '2']))
 
         # Get the first frame of the animation and create the background surface
         self.surf = self.animator.get_next()

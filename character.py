@@ -15,25 +15,26 @@ from pygame.locals import (
 )
 
 
-class Character(pygame.sprite.Sprite):
+class Character(helpers.DataSprite):
     """
+    Generic class to create a character from a .csv file
 
+    Attributes:
+        Same as DataSprite, with the addition of
+        room: the room the character is currently in
+        chatbox: an instance of Chatbox used by the character
     """
-    def __init__(self, img):
-        super(Character, self).__init__()
-        self.animator = helpers.Animator(pathname='Media/characters/' + img,
-                                          speed=0.5)
-        self.surf = self.animator.get_next('right')
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
-        self.rect = self.surf.get_rect()
+    def __init__(self, data):
+        super(Character, self).__init__(data, 'characters/')
         self.room = None
         self.chatbox = environment.Chatbox(self)
 
     def get_pos(self):
         """
+        Get the current position of the character
 
         Returns:
-
+            The x and y coordinate representing the character's position
         """
         return [self.rect.centerx, self.rect.centery]
 
@@ -51,20 +52,19 @@ class Character(pygame.sprite.Sprite):
 
     def say(self, phrase):
         """
+        Have the character say something in a chatbox.
 
         Args:
-            phrase:
-
-        Returns:
-
+            phrase: string containing the phrase for the character to say.
         """
         self.chatbox.say(phrase)
 
     def is_speaking(self):
         """
+        Determine whether or not a character is currently speaking.
 
         Returns:
-
+            True if character is currently speaking, False otherwise
         """
         return self.chatbox.is_speaking()
 
