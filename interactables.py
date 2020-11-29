@@ -27,15 +27,13 @@ class Interactable(helpers.DataSprite):
         """
         Highlight an interactable
         """
-        self.animator.get_next(type='Media/interactables/' + self.data +
-                               "/" + str(self.state) + "h")
+        self.surf = self.animator.get_next(type=str(self.state) + "h")
 
     def un_highlight(self):
         """
         Unhighlight an interactable
         """
-        self.animator.get_next(type='Media/interactables/' + self.data +
-                               "/" + str(self.state))
+        self.surf = self.animator.get_next(type=str(self.state))
 
     def update(self, screen, player):
         """
