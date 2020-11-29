@@ -2,6 +2,7 @@ import pygame
 import character
 import environment
 import os
+import interactables
 
 from pygame.locals import (
     K_ESCAPE,
@@ -29,6 +30,8 @@ class Game:
         self.player = character.Player('turtle2')
         self.npc = character.NPC('turtle')
 
+        self.lever = interactables.Interactable('lever')
+
     def intro(self):
         #pygame.mixer.music.load('Media/music/Theme_Fast.mp3')
         #pygame.mixer.music.play()
@@ -53,19 +56,25 @@ class Game:
                     credit = False
             self.clock.tick(30)
 
-
-
     def update(self):
+        """
+
+        """
         self.background.update(self.screen)
         self.room.update(self.screen)
         self.player.update(self.screen)
         self.npc.update(self.screen)
+        self.lever.update(self.screen, self.player)
 
     def run(self):
+        """
+
+        """
         self.intro()
         running = True
         self.npc.move(500, 500)
         self.player.spawn(self.room)
+        self.lever.place(400, 400)
 
         while running:
             # Look at every event in the queue

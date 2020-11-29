@@ -11,6 +11,9 @@ class Animator:
 
     """
     def __init__(self, pathname='Media/characters/turtle', speed=0.5):
+        """
+        Initialize an instance of class Animator
+        """
         self.images = {}
         self.index = {}
         self.types = []
@@ -101,5 +104,16 @@ class DataSprite(pygame.sprite.Sprite):
             screen: the surface to update to.
 
         """
-        self.surf = self.animator.get_next('main')
+        self.surf = self.animator.get_next()
         screen.blit(self.surf, self.rect)
+
+    def collide(self, other):
+        """
+
+        Args:
+            other:
+
+        Returns:
+
+        """
+        return self.rect.colliderect(other.rect)

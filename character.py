@@ -68,17 +68,6 @@ class Character(helpers.DataSprite):
         """
         return self.chatbox.is_speaking()
 
-    def collide(self, other):
-        """
-
-        Args:
-            other:
-
-        Returns:
-
-        """
-        return self.rect.colliderect(other.rect)
-
 
 class Player(Character):
     """
