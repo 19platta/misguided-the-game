@@ -21,6 +21,7 @@ class Game:
 
         # Set up the drawing window
         self.screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+        pygame.key.set_repeat(100, 100)
 
         self.clock = pygame.time.Clock()
 

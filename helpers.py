@@ -56,6 +56,13 @@ class Animator:
         self.current_type = type
         return self.images[type][math.floor(self.index[type]*self.update_speed)]
 
+    def get_next_folder(self):
+        index = self.types.index(self.current_type) + 1
+        if index == len(self.types):
+            index = 0
+        self.current_type = self.types[index]
+        return self.current_type
+
 
 class DataSprite(pygame.sprite.Sprite):
     """

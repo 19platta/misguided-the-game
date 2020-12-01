@@ -35,12 +35,22 @@ class Interactable(helpers.DataSprite):
         """
         self.surf = self.animator.get_next(type=str(self.state))
 
+    def interact(self):
+        """
+
+        """
+        print('yee')
+        self.state = self.animator.get_next_folder()
+        self.surf = self.animator.get_next()
+
     def update(self, screen, player):
         """
 
         """
         if self.collide(player):
             self.highlight()
+            if player.interacting():
+                self.interact()
         else:
             self.un_highlight()
 

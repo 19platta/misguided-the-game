@@ -1,6 +1,7 @@
 import pygame
 import helpers
 import environment
+import timer
 
 from pygame.locals import (
     K_UP,
@@ -8,6 +9,7 @@ from pygame.locals import (
     K_LEFT,
     K_RIGHT,
     K_s,
+    K_SPACE,
     K_ESCAPE,
     KEYDOWN,
     QUIT,
@@ -75,6 +77,8 @@ class Player(Character):
     """
     def __init__(self, img):
         super(Player, self).__init__(img)
+        self.interact = False
+        self.start_time = pygame.time.get_ticks()
 
     def move(self, pressed_keys):
         """
@@ -111,6 +115,20 @@ class Player(Character):
                 self.rect.move_ip(-5, 0)
         if pressed_keys[K_s]:
             self.say('Did you ever hear the Tragedy of Darth Plagueis the wise? I thought not. Its not a story the Jedi would tell you. Its a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life... He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural. He became so powerful... the only thing he was afraid of was losing his power, which eventually, of course, he did. Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. Its ironic he could save others from death, but not himself')
+        if pressed_keys[K_SPACE]:
+            if pygame.time.get_ticks() - self.start_time > 500:
+                self.interact = True
+                self.start_time = pygame.time.get_ticks()
+
+
+
+    def interacting(self):
+        if self.interact:
+            self.interact = False
+            return True
+        else:
+            return False
+
 
     def spawn(self, room):
         """
