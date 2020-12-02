@@ -25,7 +25,7 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.room = environment.Room('innlobby')
+        self.room = environment.Room('maze')
         self.background = environment.Background('nightsky')
 
         self.player = character.Player('turtle2')
@@ -96,7 +96,7 @@ class Game:
             self.player.move(pygame.key.get_pressed())
             self.update()
             # This line is for debugging boundaries
-            # self.room.draw_objects(self.screen)
+            self.room.draw_objects(self.screen)
             pygame.display.flip()
             self.screen.fill((0, 0, 0))
 
