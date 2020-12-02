@@ -8,7 +8,6 @@ import math
 
 class Animator:
     """
-
     """
     def __init__(self, pathname='Media/characters/turtle', speed=0.5):
         """
@@ -32,21 +31,16 @@ class Animator:
         self.current_type = self.types[0]
         self.update_speed = speed
 
-
     def get_current_type(self):
         """
-
         """
         return self.current_type
 
     def get_next(self, type=''):
         """
-
         Args:
             type:
-
         Returns:
-
         """
         if type == '':
             type = self.types[0]

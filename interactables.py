@@ -37,7 +37,6 @@ class Interactable(helpers.DataSprite):
 
     def interact(self):
         """
-
         """
         print('yee')
         self.state = self.animator.get_next_folder()
@@ -55,4 +54,3 @@ class Interactable(helpers.DataSprite):
             self.un_highlight()
 
         screen.blit(self.surf, self.rect)
-

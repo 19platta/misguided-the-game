@@ -8,7 +8,10 @@ import textwrap
 class Background(helpers.DataSprite):
     """
     A class designed to represent a background
-        Extracts attributes from a csv file.
+    Extracts attributes from a csv file.
+
+    The reason this is a separate class is to maintain consistency. This
+    allows us to set 'dir' as 'backgrounds/' for all instances of this class.
     """
     def __init__(self, data):
         super(Background, self).__init__(data, 'backgrounds/')
@@ -171,9 +174,33 @@ class Guide(helpers.DataSprite):
 
     """
     def __init__(self):
-        super(Guide, self).__init__()
-        self.animator = helpers.Animator(pathname='Media/misc/Guide',
-                                         types=['openclose', 'close', 'open', 'not'],
-                                         speed=0.5)
+        """
+        Initialize an instance of the guide class
+        """
+        super(Guide, self).__init__('guide', 'misc/')
+        self.state = 'close'
 
+    def update(self, screen, player):
+        """
+        Special update function for Guide. Update graphic to the current
+        state the guide is in
+        """
+        if player.is_guiding():
+            self.toggle()
+        self.surf = self.animator.get_next(self.state)
+        screen.blit(self.surf, self.rect)
 
+    def notification(self):
+        """
+        Show a notification
+        """
+        self.state = 'not'
+
+    def toggle(self):
+        """
+        Toggle the guide state to open or close the guide
+        """
+        if self.state == 'not' or self.state == 'close':
+            self.state = 'open'
+        else:
+            self.state = 'close'

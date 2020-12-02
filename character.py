@@ -1,7 +1,6 @@
 import pygame
 import helpers
 import environment
-import timer
 
 from pygame.locals import (
     K_UP,
@@ -10,6 +9,7 @@ from pygame.locals import (
     K_RIGHT,
     K_s,
     K_SPACE,
+    K_TAB,
     K_ESCAPE,
     KEYDOWN,
     QUIT,
@@ -78,6 +78,7 @@ class Player(Character):
     def __init__(self, img):
         super(Player, self).__init__(img)
         self.interact = False
+        self.guiding = False
         self.start_time = pygame.time.get_ticks()
 
     def move(self, pressed_keys):
@@ -119,8 +120,10 @@ class Player(Character):
             if pygame.time.get_ticks() - self.start_time > 500:
                 self.interact = True
                 self.start_time = pygame.time.get_ticks()
-
-
+        if pressed_keys[K_TAB]:
+            if pygame.time.get_ticks() - self.start_time > 500:
+                self.guiding = True
+                self.start_time = pygame.time.get_ticks()
 
     def interacting(self):
         if self.interact:
@@ -129,6 +132,12 @@ class Player(Character):
         else:
             return False
 
+    def is_guiding(self):
+        if self.guiding:
+            self.guiding = False
+            return True
+        else:
+            return False
 
     def spawn(self, room):
         """
@@ -167,4 +176,3 @@ class NPC(Character):
 
         """
         self.rect = self.rect.move(x, y)
-

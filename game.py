@@ -27,6 +27,7 @@ class Game:
 
         self.room = environment.Room('maze')
         self.background = environment.Background('nightsky')
+        self.guide = environment.Guide()
 
         self.player = character.Player('turtle2')
         self.npc = character.NPC('turtle')
@@ -59,14 +60,14 @@ class Game:
 
     def update(self):
         """
-
+        Update all game components
         """
         self.background.update(self.screen)
         self.room.update(self.screen)
         self.lever.update(self.screen, self.player)
         self.player.update(self.screen)
         self.npc.update(self.screen)
-
+        self.guide.update(self.screen, self.player)
 
     def run(self):
         """
