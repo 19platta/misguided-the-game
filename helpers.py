@@ -28,6 +28,7 @@ class Animator:
             for filename in sorted(os.listdir(pathname + '/' + type)):
                 img = pygame.image.load(os.path.join(pathname, type, filename))
                 self.images[type].append(Surface.convert_alpha(img))
+        self.types = sorted(self.types)
         self.current_type = self.types[0]
         self.update_speed = speed
 
