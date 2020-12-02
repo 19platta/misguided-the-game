@@ -31,7 +31,7 @@ class Game:
         self.player = character.Player('turtle2')
         self.npc = character.NPC('turtle')
 
-        self.lever = interactables.Interactable('lever')
+        self.lever = interactables.Interactable('dial')
 
     def intro(self):
         #pygame.mixer.music.load('Media/music/Theme_Fast.mp3')
@@ -96,7 +96,7 @@ class Game:
             self.player.move(pygame.key.get_pressed())
             self.update()
             # This line is for debugging boundaries
-            self.room.draw_objects(self.screen)
+            #self.room.draw_objects(self.screen)
             pygame.display.flip()
             self.screen.fill((0, 0, 0))
 
