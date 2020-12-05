@@ -65,8 +65,8 @@ class Game:
         self.background.update(self.screen)
         self.room.update(self.screen)
         self.lever.update(self.screen, self.player)
-        self.player.update(self.screen)
         self.npc.update(self.screen)
+        self.player.update(self.screen)
         self.guide.update(self.screen, self.player)
 
     def run(self):

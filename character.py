@@ -73,12 +73,29 @@ class Character(helpers.DataSprite):
 
 class Player(Character):
     """
+    Class representing a user-controlled character.
 
+    Attributes:
+        interact: boolean indicating whether the player is
+            interacting with an object of class Interactable
+        guiding: boolean indicating whether the player is interacting with
+            the guide
+        spotlight: boolean indicating whether the spotlight is on
+            or off
+        spotlight_surf: the image representing the spotlight
+        spotlight_rect: contains the coordinates defining the
+            spotlight's position
+        start_time: marks the in-game time of initialization, used for
+            interaction
     """
     def __init__(self, img):
         super(Player, self).__init__(img)
         self.interact = False
         self.guiding = False
+        self.spotlight_surf = pygame.image.load(
+            'Media/misc/spotlight/pixil-frame-0.png')
+        self.spotlight_rect = self.spotlight_surf.get_rect()
+        self.spotlight = True
         self.start_time = pygame.time.get_ticks()
 
     def move(self, pressed_keys):
@@ -126,6 +143,13 @@ class Player(Character):
                 self.start_time = pygame.time.get_ticks()
 
     def interacting(self):
+        """
+        Determine if the player is currently attempting to interact with an
+        object of class Interactable.
+
+        Returns:
+            True is the player is interacting, False otherwise.
+        """
         if self.interact:
             self.interact = False
             return True
@@ -133,6 +157,12 @@ class Player(Character):
             return False
 
     def is_guiding(self):
+        """
+        Determine if the player is attempting to interact with the Guide.
+
+        Returns:
+            True if the player is attempting to interact, False otherwise.
+        """
         if self.guiding:
             self.guiding = False
             return True
@@ -141,21 +171,49 @@ class Player(Character):
 
     def spawn(self, room):
         """
+        Spawn the player at the spawn location of a room, designated by the
+        room's .csv file
 
         Args:
-            room:
-
-        Returns:
-
+            room: the room object to spawn the character in
         """
         self.room = room
         self.rect = self.rect.move(self.room.get_spawn()[0],
                                    self.room.get_spawn()[1])
 
+    def spotlight_on(self):
+        """
+        Switches the spotlight on.
+
+        A spotlight is a transparent circle in a black background that moves
+        as the player moves. It creates the effect of a small circle of light
+        around the player while obscuring the rest of the room.
+        """
+        self.spotlight = True
+
+    def spotlight_off(self):
+        """
+        Switches the spotlight off.
+
+        A spotlight is a transparent circle in a black background that moves
+        as the player moves. It creates the effect of a small circle of light
+        around the player while obscuring the rest of the room.
+        """
+        self.spotlight = False
+
+    def update(self, screen):
+        """
+        Update the player, and spotlight if necessary
+        """
+        if self.spotlight:
+            self.spotlight_rect.center = (self.get_pos()[0], self.get_pos()[1])
+            screen.blit(self.spotlight_surf, self.spotlight_rect)
+        super(Player, self).update(screen)
+
 
 class NPC(Character):
     """
-
+    Creates a non-playable character (NPC) sprite from a .csv file
     """
     def __init__(self, img):
         """
