@@ -179,6 +179,11 @@ class Guide(helpers.DataSprite):
         """
         super(Guide, self).__init__('guide', 'misc/')
         self.state = 'close'
+        self.font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf', 30)
+        with open('Media/misc/guide/guide.txt') as f:
+            lines = f.readlines()
+        self.lines = [line.strip() for line in lines]
+        self.current_index = 0
 
     def update(self, screen, player):
         """
@@ -189,6 +194,8 @@ class Guide(helpers.DataSprite):
             self.toggle()
         self.surf = self.animator.get_next(self.state)
         screen.blit(self.surf, self.rect)
+        if self.state == 'open':
+            self.display_text(screen)
 
     def notification(self):
         """
@@ -204,3 +211,37 @@ class Guide(helpers.DataSprite):
             self.state = 'open'
         else:
             self.state = 'close'
+
+    def update_text(self):
+        self.current_index += 1
+
+    def display_text(self, screen):
+        """
+
+        Args:
+            screen:
+
+        Returns:
+
+        """
+        # Split the speech into lines that can fit in the chatbox
+        processed = []
+        numlines = 32  # make this even
+        for i in range(min(self.current_index * 2, len(self.lines)-1), -1, -1):
+            next_step = textwrap.fill(self.lines[i], 19).split('\n')
+            if(len(processed) + len(next_step) > numlines):
+                break
+            processed = next_step + processed
+        # If the phrase length is greater than zero, display the chatbox with
+        # the phrase in it
+        for i in range(0, min(numlines//2, len(processed))):
+            # Display the text. If it's long, show only the last four lines.
+            # This creates a scrolling effect
+            screen.blit(self.font.render(processed[i], True, (0, 0, 0)),
+                        (150, 100 + (i * 30)))
+        for j in range(numlines//2, min(numlines, len(processed))):
+            screen.blit(self.font.render(processed[j], True, (0, 0, 0)),
+                        (570, 100  + ((j - numlines//2) * 30)))
+
+
+

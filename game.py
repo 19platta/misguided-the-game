@@ -25,14 +25,14 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.room = environment.Room('maze')
+        self.room = environment.Room('innlobby')
         self.background = environment.Background('nightsky')
         self.guide = environment.Guide()
 
         self.player = character.Player('turtle2')
         self.npc = character.NPC('turtle')
 
-        self.lever = interactables.Interactable('dial')
+        self.lever = interactables.Interactable('piano')
 
     def intro(self):
         #pygame.mixer.music.load('Media/music/Theme_Fast.mp3')
@@ -52,7 +52,7 @@ class Game:
             pygame.display.flip()
             self.clock.tick(6)
         pygame.event.clear()
-        while credit == True:
+        while credit is True:
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     credit = False
@@ -77,7 +77,7 @@ class Game:
         running = True
         self.npc.move(500, 500)
         self.player.spawn(self.room)
-        self.lever.place(400, 400)
+        self.lever.place(350, 550)
 
         while running:
             # Look at every event in the queue
