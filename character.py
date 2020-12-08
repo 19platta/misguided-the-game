@@ -141,6 +141,8 @@ class Player(Character):
             if pygame.time.get_ticks() - self.start_time > 500:
                 self.guiding = True
                 self.start_time = pygame.time.get_ticks()
+        if pygame.time.get_ticks() - self.start_time > 100:
+            self.interact = False
 
     def interacting(self):
         """
@@ -169,17 +171,25 @@ class Player(Character):
         else:
             return False
 
-    def spawn(self, room):
+    def spawn(self, room, str):
         """
         Spawn the player at the spawn location of a room, designated by the
         room's .csv file
 
         Args:
             room: the room object to spawn the character in
+            index: the specific entrance of the room at which to spawn
+                (defaults to the first entrance, index 0)
         """
         self.room = room
-        self.rect = self.rect.move(self.room.get_spawn()[0],
-                                   self.room.get_spawn()[1])
+        self.rect.left = self.room.get_entrance(str)[0]
+        self.rect.top = self.room.get_entrance(str)[1]
+
+    def is_exiting(self, room):
+        for exit in room.get_exits():
+            if self.rect.colliderect(exit[0]):
+                return [exit[1], room.name]
+        return None
 
     def spotlight_on(self):
         """

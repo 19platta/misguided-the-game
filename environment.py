@@ -36,8 +36,6 @@ class Room(helpers.DataSprite):
         """
         super(Room, self).__init__(data, 'rooms/')
 
-        self.spawn = [int(self.datafile.loc['spawn', '2']), int(self.datafile.loc['spawn', '3'])]
-
         self.borders = self.datafile.loc['borders'].dropna().values.tolist()
         self.borders = [int(border) for border in self.borders]
 
@@ -48,14 +46,32 @@ class Room(helpers.DataSprite):
                                             object[1]+self.rect.top,
                                             object[2], object[3]))
 
-    def get_spawn(self):
+        self.entrances = []
+        for object in self.datafile.loc['entrances'].dropna().values.tolist():
+            object = [obj for obj in object.split('/')]
+            self.entrances.append([int(object[0]), int(object[1]), str(object[2])])
+
+        self.exits = []
+        for object in self.datafile.loc['exits'].dropna().values.tolist():
+            object = [obj for obj in object.split('/')]
+            self.exits.append([pygame.Rect(int(object[0]) + self.rect.left,
+                                           int(object[1]) + self.rect.top,
+                                           int(object[2]), int(object[3])),
+                               str(object[4])])
+
+    def get_entrance(self, str):
         """
         Accessor for the spawn location
 
         Returns:
             the spawn location of the room as an [x,y] list
         """
-        return [self.spawn[0], self.spawn[1]]
+        for entrance in self.entrances:
+            if entrance[2] == str:
+                return [entrance[0], entrance[1]]
+
+    def get_exits(self):
+        return self.exits
 
     def get_objects(self):
         """
