@@ -108,13 +108,13 @@ class Player(Character):
 
         """
         if pressed_keys[K_UP]:
-            self.surf = self.animator.get_next('right')
+            self.surf = self.animator.get_next('back')
             self.rect.move_ip(0, -5)
             if pygame.Rect.collidelist(self.rect,
                                        self.room.get_objects()) >= 0:
                 self.rect.move_ip(0, 5)
         if pressed_keys[K_DOWN]:
-            self.surf = self.animator.get_next('right')
+            self.surf = self.animator.get_next('front')
             self.rect.move_ip(0, 5)
             if pygame.Rect.collidelist(self.rect,
                                        self.room.get_objects()) >= 0:
