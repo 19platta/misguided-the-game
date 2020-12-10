@@ -29,7 +29,7 @@ class Game:
         self.background = environment.Background('nightsky')
         self.guide = environment.Guide()
 
-        self.player = character.Player('turtle2')
+        self.player = character.Player('player')
         #self.npc = character.NPC('turtle')
 
         self.lever = interactables.Interactable('piano')
