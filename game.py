@@ -25,12 +25,12 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.room = environment.Room('innlobby')
+        self.room = environment.Room('maze')
         self.background = environment.Background('nightsky')
         self.guide = environment.Guide()
 
         self.player = character.Player('turtle2')
-        self.npc = character.NPC('turtle')
+        #self.npc = character.NPC('turtle')
 
         self.lever = interactables.Interactable('piano')
 
@@ -65,7 +65,7 @@ class Game:
         self.background.update(self.screen)
         self.room.update(self.screen)
         self.lever.update(self.screen, self.player)
-        self.npc.update(self.screen)
+        #self.npc.update(self.screen)
         self.player.update(self.screen)
         self.guide.update(self.screen, self.player)
 
@@ -75,8 +75,8 @@ class Game:
         """
         #self.intro()
         running = True
-        self.npc.move(500, 500)
-        self.player.spawn(self.room)
+        #self.npc.move(500, 500)
+        self.player.spawn(self.room, 'innlobby')
         self.lever.place(350, 550)
 
         while running:
@@ -91,8 +91,12 @@ class Game:
                 # Did the user click the window close button? If so, stop the loop.
                 elif event.type == QUIT:
                     running = False
-            if self.player.collide(self.npc):
-                self.npc.say('Ow!!')
+            #if self.player.collide(self.npc):
+                #self.npc.say('Ow!!')
+            if self.player.is_exiting(self.room) is not None:
+                rooms = self.player.is_exiting(self.room)
+                self.room = environment.Room(rooms[0])
+                self.player.spawn(self.room, rooms[1])
 
             self.player.move(pygame.key.get_pressed())
             self.update()

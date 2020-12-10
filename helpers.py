@@ -81,7 +81,7 @@ class DataSprite(pygame.sprite.Sprite):
         # Create path and read the .csv defining the background
         path = 'Media/' + dir + data + "/" + data + '.csv'
         self.datafile = pandas.read_csv(path, index_col=0)
-
+        self.name = data
         # Assign the animator path and update speed to a new instance of Animator
         self.animator = Animator(
             pathname='Media/' + dir + data,
