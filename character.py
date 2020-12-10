@@ -27,7 +27,7 @@ class Character(helpers.DataSprite):
         chatbox: an instance of Chatbox used by the character
     """
     def __init__(self, data):
-        super(Character, self).__init__(data, 'characters/')
+        super().__init__(data, 'characters/')
         self.room = None
         self.chatbox = environment.Chatbox(self)
 
@@ -89,13 +89,13 @@ class Player(Character):
             interaction
     """
     def __init__(self, img):
-        super(Player, self).__init__(img)
+        super().__init__(img)
         self.interact = False
         self.guiding = False
         self.spotlight_surf = pygame.image.load(
             'Media/misc/spotlight/pixil-frame-0.png')
         self.spotlight_rect = self.spotlight_surf.get_rect()
-        self.spotlight = True
+        self.spotlight = False
         self.start_time = pygame.time.get_ticks()
 
     def move(self, pressed_keys):
@@ -218,7 +218,7 @@ class Player(Character):
         if self.spotlight:
             self.spotlight_rect.center = (self.get_pos()[0], self.get_pos()[1])
             screen.blit(self.spotlight_surf, self.spotlight_rect)
-        super(Player, self).update(screen)
+        super().update(screen)
 
 
 class NPC(Character):
@@ -231,7 +231,7 @@ class NPC(Character):
         Args:
             img:
         """
-        super(NPC, self).__init__(img)
+        super().__init__(img)
 
     def move(self, x, y):
         """

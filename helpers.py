@@ -76,7 +76,7 @@ class DataSprite(pygame.sprite.Sprite):
             specified by datafile
     """
     def __init__(self, data, dir):
-        super(DataSprite, self).__init__()
+        super().__init__()
 
         # Create path and read the .csv defining the background
         path = 'Media/' + dir + data + "/" + data + '.csv'

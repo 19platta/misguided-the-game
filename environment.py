@@ -3,6 +3,8 @@ import helpers
 from pygame.locals import RLEACCEL
 import math
 import textwrap
+import interactables
+import character
 
 
 class Background(helpers.DataSprite):
@@ -14,7 +16,7 @@ class Background(helpers.DataSprite):
     allows us to set 'dir' as 'backgrounds/' for all instances of this class.
     """
     def __init__(self, data):
-        super(Background, self).__init__(data, 'backgrounds/')
+        super().__init__(data, 'backgrounds/')
 
 
 class Room(helpers.DataSprite):
@@ -34,7 +36,7 @@ class Room(helpers.DataSprite):
         Args:
             data: the .csv file to use
         """
-        super(Room, self).__init__(data, 'rooms/')
+        super().__init__(data, 'rooms/')
 
         self.borders = self.datafile.loc['borders'].dropna().values.tolist()
         self.borders = [int(border) for border in self.borders]
@@ -58,10 +60,21 @@ class Room(helpers.DataSprite):
                                            int(object[1]) + self.rect.top,
                                            int(object[2]), int(object[3])),
                                str(object[4])])
+        self.interactables = []
+        for item in self.datafile.loc['interactables'].dropna().values.tolist():
+            item = [i for i in item.split('/')]
+            self.interactables.append(interactables.Interactable(str(item[2]), str(item[3])))
+            self.interactables[-1].place(int(item[0]), int(item[1]))
+        self.npcs = []
+        for npc in self.datafile.loc['npcs'].dropna().values.tolist():
+            npc = [i for i in npc.split('/')]
+            self.npcs.append(character.NPC(str(npc[2])))
+            self.npcs[-1].move(int(npc[0]), int(npc[1]))
 
     def get_entrance(self, str):
         """
-        Accessor for the spawn location
+        Finds the correct entrance to a room based on where the player
+        is entering from.
 
         Returns:
             the spawn location of the room as an [x,y] list
@@ -71,6 +84,12 @@ class Room(helpers.DataSprite):
                 return [entrance[0], entrance[1]]
 
     def get_exits(self):
+        """
+        Access all possible exits from the room.
+
+        Returns:
+            a list containing all the exits.
+        """
         return self.exits
 
     def get_objects(self):
@@ -95,13 +114,35 @@ class Room(helpers.DataSprite):
             pygame.draw.rect(surface=screen, rect=rect,
                              color=pygame.Color(0,0,255))
 
+    def is_clear(self):
+        """
+        Determine if all the criteria to pass a room have been met.
+
+        Returns:
+            True if all criteria have been met, False otherwise
+        """
+        for interactable in self.interactables:
+            if not interactable.is_end_state():
+                return False
+        return True
+
+    def update(self, screen, player):
+        """
+
+        """
+        super().update(screen)
+        for interactable in self.interactables:
+            interactable.update(screen, player)
+        for npc in self.npcs:
+            npc.update(screen)
+
 
 class Chatbox(pygame.sprite.Sprite):
     """
 
     """
     def __init__(self, sprite):
-        super(Chatbox, self).__init__()
+        super().__init__()
         self.surf = pygame.image.load('Media/misc/chatbox-2.png')
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
@@ -193,7 +234,7 @@ class Guide(helpers.DataSprite):
         """
         Initialize an instance of the guide class
         """
-        super(Guide, self).__init__('guide', 'misc/')
+        super().__init__('guide', 'misc/')
         self.state = 'close'
         self.font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf', 30)
         with open('Media/misc/guide/guide.txt') as f:

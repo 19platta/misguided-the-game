@@ -8,13 +8,14 @@ class Interactable(helpers.DataSprite):
     """
     A class for objects which the player can interact with.
     """
-    def __init__(self, data):
+    def __init__(self, data, end_state=1):
         """
         Initialize an instance of the Interactable class
         """
-        super(Interactable, self).__init__(data, 'interactables/')
+        super().__init__(data, 'interactables/')
         self.state = int(self.datafile.loc['initial_state', '2'])
         self.data = data
+        self.end_state = end_state
 
     def place(self, x, y):
         """
@@ -54,3 +55,13 @@ class Interactable(helpers.DataSprite):
             self.un_highlight()
 
         screen.blit(self.surf, self.rect)
+
+    def is_end_state(self):
+        """
+        Determine if an interactable is in the correct state to move to the
+        next room.
+
+        Returns:
+             True if it is in the correct state, False otherwise
+        """
+        return self.state == self.end_state

@@ -32,8 +32,6 @@ class Game:
         self.player = character.Player('player')
         #self.npc = character.NPC('turtle')
 
-        self.lever = interactables.Interactable('piano')
-
     def intro(self):
         #pygame.mixer.music.load('Media/music/Theme_Fast.mp3')
         #pygame.mixer.music.play()
@@ -63,8 +61,7 @@ class Game:
         Update all game components
         """
         self.background.update(self.screen)
-        self.room.update(self.screen)
-        self.lever.update(self.screen, self.player)
+        self.room.update(self.screen, self.player)
         #self.npc.update(self.screen)
         self.player.update(self.screen)
         self.guide.update(self.screen, self.player)
@@ -77,7 +74,6 @@ class Game:
         running = True
         #self.npc.move(500, 500)
         self.player.spawn(self.room, 'innlobby')
-        self.lever.place(350, 550)
 
         while running:
             # Look at every event in the queue
@@ -93,7 +89,7 @@ class Game:
                     running = False
             #if self.player.collide(self.npc):
                 #self.npc.say('Ow!!')
-            if self.player.is_exiting(self.room) is not None:
+            if (self.player.is_exiting(self.room) is not None) and self.room.is_clear():
                 rooms = self.player.is_exiting(self.room)
                 self.room = environment.Room(rooms[0])
                 self.player.spawn(self.room, rooms[1])
