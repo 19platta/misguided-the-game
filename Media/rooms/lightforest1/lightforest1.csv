@@ -1,0 +1,9 @@
+1,2,3,4,5,6,7,8,9,10
+place,0,0,,,,
+animator,0.1,,,,
+borders,,,,,,
+objects
+entrances,300/540/lightforestentrance
+exits,1080/300/20/20/darkforestcampfire
+interactables
+npcs

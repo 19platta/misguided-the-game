@@ -233,7 +233,7 @@ class NPC(Character):
         """
         super().__init__(img)
 
-    def move(self, x, y):
+    def spawn(self, x, y):
         """
 
         Args:
@@ -244,3 +244,39 @@ class NPC(Character):
 
         """
         self.rect = self.rect.move(x, y)
+
+    def move(self, direction):
+        """
+        Move the NPC in a given direction. Will not allow walking into
+        obstacles.
+
+        Assumes input will one of 'up', 'down', 'left', or 'right'.
+
+        Args:
+            direction: string containing the direction to move the character.
+
+        """
+        if direction == 'up':
+            self.surf = self.animator.get_next('back')
+            self.rect.move_ip(0, -5)
+            if pygame.Rect.collidelist(self.rect,
+                                       self.room.get_objects()) >= 0:
+                self.rect.move_ip(0, 5)
+        if direction == 'down':
+            self.surf = self.animator.get_next('front')
+            self.rect.move_ip(0, 5)
+            if pygame.Rect.collidelist(self.rect,
+                                       self.room.get_objects()) >= 0:
+                self.rect.move_ip(0, -5)
+        if direction == 'left':
+            self.surf = self.animator.get_next('left')
+            self.rect.move_ip(-5, 0)
+            if pygame.Rect.collidelist(self.rect,
+                                       self.room.get_objects()) >= 0:
+                self.rect.move_ip(5, 0)
+        if direction == 'right':
+            self.surf = self.animator.get_next('right')
+            self.rect.move_ip(5, 0)
+            if pygame.Rect.collidelist(self.rect,
+                                       self.room.get_objects()) >= 0:
+                self.rect.move_ip(-5, 0)

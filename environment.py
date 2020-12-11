@@ -69,7 +69,7 @@ class Room(helpers.DataSprite):
         for npc in self.datafile.loc['npcs'].dropna().values.tolist():
             npc = [i for i in npc.split('/')]
             self.npcs.append(character.NPC(str(npc[2])))
-            self.npcs[-1].move(int(npc[0]), int(npc[1]))
+            self.npcs[-1].spawn(int(npc[0]), int(npc[1]))
 
     def get_entrance(self, str):
         """
