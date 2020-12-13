@@ -20,10 +20,15 @@ screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 
 # Initialize one of each type for testing
 test_room = environment.Room('testroom')
+
 test_char = character.Player('testcharacter')
-test_background = environment.Background('testbackground')
-test_interact = interactables.Interactable('testinteract')
 test_char.spawn(test_room, 'maze')
+
+test_background = environment.Background('testbackground')
+
+test_interact = interactables.Interactable('testinteract')
+test_interact.place(50, 490)
+
 
 @pytest.mark.parametrize("actual,expected", [
   (test_room.name, 'testroom'),
@@ -37,7 +42,16 @@ def test_room(actual, expected):
 @pytest.mark.parametrize("actual,expected", [
   (test_char.name, 'testcharacter'),
   (test_char.get_pos(), [50,480]),
-
+  (test_char.collide(test_interact), True)
 ])
 def test_char(actual, expected):
+    assert actual == expected
+
+
+@pytest.mark.parametrize("actual,expected", [
+  (test_interact.name, 'testinteract'),
+  (test_interact.is_end_state(), True),
+
+])
+def test_interact(actual, expected):
     assert actual == expected
