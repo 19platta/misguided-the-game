@@ -25,11 +25,11 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.room = environment.Room('lightforestentrance')
+        self.room = environment.Room('innlobby')
         self.background = environment.Background('nightsky')
         self.guide = environment.Guide()
 
-        self.player = character.Player('player')
+        self.player = character.Player('turtle2')
         #self.npc = character.NPC('turtle')
 
     def intro(self):
@@ -73,7 +73,7 @@ class Game:
         #self.intro()
         running = True
         #self.npc.move(500, 500)
-        self.player.spawn(self.room, 'lightforest1')
+        self.player.spawn(self.room, 'maze')
 
         while running:
             # Look at every event in the queue

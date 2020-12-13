@@ -132,7 +132,8 @@ class Player(Character):
                                        self.room.get_objects()) >= 0:
                 self.rect.move_ip(-5, 0)
         if pressed_keys[K_s]:
-            self.say('Did you ever hear the Tragedy of Darth Plagueis the wise? I thought not. Its not a story the Jedi would tell you. Its a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life... He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural. He became so powerful... the only thing he was afraid of was losing his power, which eventually, of course, he did. Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. Its ironic he could save others from death, but not himself')
+            self.say('Oi get off my piano')
+            #self.say('Did you ever hear the Tragedy of Darth Plagueis the wise? I thought not. Its not a story the Jedi would tell you. Its a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life... He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural. He became so powerful... the only thing he was afraid of was losing his power, which eventually, of course, he did. Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. Its ironic he could save others from death, but not himself')
         if pressed_keys[K_SPACE]:
             if pygame.time.get_ticks() - self.start_time > 500:
                 self.interact = True
@@ -182,8 +183,8 @@ class Player(Character):
                 (defaults to the first entrance, index 0)
         """
         self.room = room
-        self.rect.left = self.room.get_entrance(str)[0]
-        self.rect.top = self.room.get_entrance(str)[1]
+        self.rect.centerx = self.room.get_entrance(str)[0]
+        self.rect.centery = self.room.get_entrance(str)[1]
 
     def is_exiting(self, room):
         for exit in room.get_exits():

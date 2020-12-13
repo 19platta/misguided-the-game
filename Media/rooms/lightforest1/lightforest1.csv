@@ -1,9 +1,9 @@
-1,2,3,4,5,6,7,8,9,10
-place,0,0,,,,
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+place,0,200,,,,
 animator,0.1,,,,
 borders,,,,,,
-objects
-entrances,300/540/lightforestentrance
-exits,1080/300/20/20/darkforestcampfire
+objects,0/0/1/500,0/50/1080/20,1079/0/1/500,0/500/1080/20,0/50/200/80,0/50/300/40,0/405/1080/80,470/320/130/80,420/360/130/80,860/360/230/80,900/60/230/50,320/200/70/50,765/250/60/40
+entrances,60/480/lightforestentrance,1020/480/lightforest2
+exits,0/0/20/700/lightforestentrance,1060/0/20/700/lightforest2
 interactables
 npcs
