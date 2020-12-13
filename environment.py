@@ -56,8 +56,8 @@ class Room(helpers.DataSprite):
         self.exits = []
         for object in self.datafile.loc['exits'].dropna().values.tolist():
             object = [obj for obj in object.split('/')]
-            self.exits.append([pygame.Rect(int(object[0]) + self.rect.left,
-                                           int(object[1]) + self.rect.top,
+            self.exits.append([pygame.Rect(int(object[0]),
+                                           int(object[1]),
                                            int(object[2]), int(object[3])),
                                str(object[4])])
         self.interactables = []

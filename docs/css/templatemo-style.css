@@ -581,6 +581,14 @@ hr {
   background-position: center;
 }
 
+#bg_dark_forest {
+  background-image: url(../img/darkforest-gif.gif);
+  height: 640px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 .tm-section-icon-container {
   display: flex;
   align-items: center;
@@ -960,6 +968,10 @@ hr {
   }
 
   #bg_img_32 {
+    height: 600px;
+  }
+
+  #bg_dark_forest {
     height: 600px;
   }
 }
