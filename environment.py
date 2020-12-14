@@ -38,35 +38,30 @@ class Room(helpers.DataSprite):
         """
         super().__init__(data, 'rooms/')
 
-        self.borders = self.datafile.loc['borders'].dropna().values.tolist()
-        self.borders = [int(border) for border in self.borders]
-
         self.objects = []
-        for object in self.datafile.loc['objects'].dropna().values.tolist():
+        for object in self._datafile.loc['objects'].dropna().values.tolist():
             object = [int(obj) for obj in object.split('/')]
-            self.objects.append(pygame.Rect(object[0]+self.rect.left,
-                                            object[1]+self.rect.top,
+            self.objects.append(pygame.Rect(object[0]+self._rect.left,
+                                            object[1]+self._rect.top,
                                             object[2], object[3]))
-
         self.entrances = []
-        for object in self.datafile.loc['entrances'].dropna().values.tolist():
+        for object in self._datafile.loc['entrances'].dropna().values.tolist():
             object = [obj for obj in object.split('/')]
             self.entrances.append([int(object[0]), int(object[1]), str(object[2])])
-
         self.exits = []
-        for object in self.datafile.loc['exits'].dropna().values.tolist():
+        for object in self._datafile.loc['exits'].dropna().values.tolist():
             object = [obj for obj in object.split('/')]
             self.exits.append([pygame.Rect(int(object[0]),
                                            int(object[1]),
                                            int(object[2]), int(object[3])),
                                str(object[4])])
         self.interactables = []
-        for item in self.datafile.loc['interactables'].dropna().values.tolist():
+        for item in self._datafile.loc['interactables'].dropna().values.tolist():
             item = [i for i in item.split('/')]
             self.interactables.append(interactables.Interactable(str(item[2]), str(item[3])))
             self.interactables[-1].place(int(item[0]), int(item[1]))
         self.npcs = []
-        for npc in self.datafile.loc['npcs'].dropna().values.tolist():
+        for npc in self._datafile.loc['npcs'].dropna().values.tolist():
             npc = [i for i in npc.split('/')]
             self.npcs.append(character.NPC(str(npc[2])))
             self.npcs[-1].spawn(int(npc[0]), int(npc[1]))
@@ -143,13 +138,14 @@ class Chatbox(pygame.sprite.Sprite):
     """
     def __init__(self, sprite):
         super().__init__()
-        self.surf = pygame.image.load('Media/misc/chatbox-2.png')
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
-        self.rect = self.surf.get_rect()
-        self.phrase = ''
-        self.index = 0
-        self.font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf', 15)
-        self.sprite = sprite
+        self._surf = pygame.image.load('Media/misc/chatbox-2.png')
+        self._surf.set_colorkey((255, 255, 255), RLEACCEL)
+        self._rect = self._surf.get_rect()
+        self._phrase = ''
+        self._index = 0
+        self._font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf', 15)
+        self._sprite = sprite
+        self._past_phrases = []
 
     def say(self, phrase):
         """
@@ -158,7 +154,13 @@ class Chatbox(pygame.sprite.Sprite):
         Args:
             phrase: string containing the phrase
         """
-        self.phrase = phrase
+        self._phrase = phrase
+
+    def say_once(self, phrase):
+
+        if phrase not in self._past_phrases:
+            self._phrase = phrase
+            self._past_phrases.append(phrase)
 
     def is_speaking(self):
         """
@@ -167,7 +169,7 @@ class Chatbox(pygame.sprite.Sprite):
         Returns:
             True if phrase is not empty, False otherwise
         """
-        return self.phrase != ''
+        return self._phrase != ''
 
     def _process_speech(self, speed):
         """
@@ -178,20 +180,21 @@ class Chatbox(pygame.sprite.Sprite):
         Returns:
 
         """
-        self.index += 1
+        self._index += 1
         # If there is still stuff left to say, say it at the specified speed
-        if math.floor(self.index * speed) <= len(self.phrase):
-            processed = self.phrase[0:math.floor(self.index * speed)]
+        if math.floor(self._index * speed) <= len(self._phrase):
+            processed = self._phrase[0:math.floor(self._index * speed)]
         # If there isn't anything left to say, only terminate the speech after
         # a short delay. The delay is inversely proportional to the length of
         # the phrase.
-        elif math.floor(self.index * speed) > len(self.phrase) * (1 + 50/(len(self.phrase)+1)):
-            self.index = 0
-            self.phrase = ''
+        elif math.floor(self._index * speed) > len(self._phrase) * \
+                        (1 + 50/(len(self._phrase)+1)):
+            self._index = 0
+            self._phrase = ''
             processed = ''
         # If the short delay hasn't been met, say the full phrase
         else:
-            processed = self.phrase
+            processed = self._phrase
 
         return processed
 
@@ -208,20 +211,20 @@ class Chatbox(pygame.sprite.Sprite):
         processed = textwrap.fill(self._process_speech(0.6), 19).split('\n')
         # If the phrase length is greater than zero, display the chatbox with
         # the phrase in it
-        if len(self.phrase) > 0:
+        if len(self._phrase) > 0:
             # Define position of the chatbox based on the character saying it
-            x = self.sprite.get_pos()[0]
-            y = self.sprite.get_pos()[1]
-            self.rect.centerx = x
-            self.rect.centery = y-130
+            x = self._sprite.get_pos()[0]
+            y = self._sprite.get_pos()[1]
+            self._rect.centerx = x
+            self._rect.centery = y-130
             # Show the chatbox
-            screen.blit(self.surf, self.rect)
+            screen.blit(self._surf, self._rect)
             # Display the text. If it's long, show only the last four lines.
             # This creates a scrolling effect
             i = 0
             for part in processed[-4:]:
-                screen.blit(self.font.render(part, True, (0, 0, 0)),
-                            (self.rect.left + 8, self.rect.top + 90 + i))
+                screen.blit(self._font.render(part, True, (0, 0, 0)),
+                            (self._rect.left + 8, self._rect.top + 90 + i))
                 # Increment line height so text doesn't print on top of itself
                 i += 15
 
@@ -235,12 +238,12 @@ class Guide(helpers.DataSprite):
         Initialize an instance of the guide class
         """
         super().__init__('guide', 'misc/')
-        self.state = 'close'
-        self.font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf', 30)
+        self._state = 'close'
+        self._font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf', 30)
         with open('Media/misc/guide/guide.txt') as f:
             lines = f.readlines()
-        self.lines = [line.strip() for line in lines]
-        self.current_index = 0
+        self._lines = [line.strip() for line in lines]
+        self._current_index = 0
 
     def update(self, screen, player):
         """
@@ -249,28 +252,28 @@ class Guide(helpers.DataSprite):
         """
         if player.is_guiding():
             self.toggle()
-        self.surf = self.animator.get_next(self.state)
-        screen.blit(self.surf, self.rect)
-        if self.state == 'open':
+        self._surf = self._animator.get_next(self._state)
+        screen.blit(self._surf, self._rect)
+        if self._state == 'open':
             self.display_text(screen)
 
     def notification(self):
         """
         Show a notification
         """
-        self.state = 'not'
+        self._state = 'not'
 
     def toggle(self):
         """
         Toggle the guide state to open or close the guide
         """
-        if self.state == 'not' or self.state == 'close':
-            self.state = 'open'
+        if self._state == 'not' or self._state == 'close':
+            self._state = 'open'
         else:
-            self.state = 'close'
+            self._state = 'close'
 
     def update_text(self):
-        self.current_index += 1
+        self._current_index += 1
 
     def display_text(self, screen):
         """
@@ -284,8 +287,8 @@ class Guide(helpers.DataSprite):
         # Split the speech into lines that can fit in the chatbox
         processed = []
         numlines = 32  # make this even
-        for i in range(min(self.current_index * 2, len(self.lines)-1), -1, -1):
-            next_step = textwrap.fill(self.lines[i], 19).split('\n')
+        for i in range(min(self._current_index * 2, len(self._lines)-1), -1, -1):
+            next_step = textwrap.fill(self._lines[i], 19).split('\n')
             if(len(processed) + len(next_step) > numlines):
                 break
             processed = next_step + processed
@@ -294,10 +297,10 @@ class Guide(helpers.DataSprite):
         for i in range(0, min(numlines//2, len(processed))):
             # Display the text. If it's long, show only the last four lines.
             # This creates a scrolling effect
-            screen.blit(self.font.render(processed[i], True, (0, 0, 0)),
+            screen.blit(self._font.render(processed[i], True, (0, 0, 0)),
                         (150, 100 + (i * 30)))
         for j in range(numlines//2, min(numlines, len(processed))):
-            screen.blit(self.font.render(processed[j], True, (0, 0, 0)),
+            screen.blit(self._font.render(processed[j], True, (0, 0, 0)),
                         (570, 100  + ((j - numlines//2) * 30)))
 
 

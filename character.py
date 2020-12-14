@@ -28,8 +28,8 @@ class Character(helpers.DataSprite):
     """
     def __init__(self, data):
         super().__init__(data, 'characters/')
-        self.room = None
-        self.chatbox = environment.Chatbox(self)
+        self._room = None
+        self._chatbox = environment.Chatbox(self)
 
     def get_pos(self):
         """
@@ -38,7 +38,7 @@ class Character(helpers.DataSprite):
         Returns:
             The x and y coordinate representing the character's position
         """
-        return [self.rect.centerx, self.rect.centery]
+        return [self._rect.centerx, self._rect.centery]
 
     def update(self, screen):
         """
@@ -49,8 +49,8 @@ class Character(helpers.DataSprite):
         Returns:
 
         """
-        screen.blit(self.surf, self.rect)
-        self.chatbox.update(screen)
+        screen.blit(self._surf, self._rect)
+        self._chatbox.update(screen)
 
     def say(self, phrase):
         """
@@ -59,7 +59,16 @@ class Character(helpers.DataSprite):
         Args:
             phrase: string containing the phrase for the character to say.
         """
-        self.chatbox.say(phrase)
+        self._chatbox.say(phrase)
+
+    def say_once(self, phrase):
+        """
+        Have the character say something in a chatbox, only once
+
+        Args:
+            phrase: string containing the phrase for the character to say.
+        """
+        self._chatbox.say_once(phrase)
 
     def is_speaking(self):
         """
@@ -68,7 +77,7 @@ class Character(helpers.DataSprite):
         Returns:
             True if character is currently speaking, False otherwise
         """
-        return self.chatbox.is_speaking()
+        return self._chatbox.is_speaking()
 
 
 class Player(Character):
@@ -90,13 +99,13 @@ class Player(Character):
     """
     def __init__(self, img):
         super().__init__(img)
-        self.interact = False
-        self.guiding = False
-        self.spotlight_surf = pygame.image.load(
+        self._interact = False
+        self._guiding = False
+        self._spotlight_surf = pygame.image.load(
             'Media/misc/spotlight/pixil-frame-0.png')
-        self.spotlight_rect = self.spotlight_surf.get_rect()
-        self.spotlight = False
-        self.start_time = pygame.time.get_ticks()
+        self._spotlight_rect = self._spotlight_surf.get_rect()
+        self._spotlight = False
+        self._start_time = pygame.time.get_ticks()
 
     def move(self, pressed_keys):
         """
@@ -108,42 +117,42 @@ class Player(Character):
 
         """
         if pressed_keys[K_UP]:
-            self.surf = self.animator.get_next('back')
-            self.rect.move_ip(0, -5)
-            if pygame.Rect.collidelist(self.rect,
-                                       self.room.get_objects()) >= 0:
-                self.rect.move_ip(0, 5)
+            self._surf = self._animator.get_next('back')
+            self._rect.move_ip(0, -5)
+            if pygame.Rect.collidelist(self._rect,
+                                       self._room.get_objects()) >= 0:
+                self._rect.move_ip(0, 5)
         if pressed_keys[K_DOWN]:
-            self.surf = self.animator.get_next('front')
-            self.rect.move_ip(0, 5)
-            if pygame.Rect.collidelist(self.rect,
-                                       self.room.get_objects()) >= 0:
-                self.rect.move_ip(0, -5)
+            self._surf = self._animator.get_next('front')
+            self._rect.move_ip(0, 5)
+            if pygame.Rect.collidelist(self._rect,
+                                       self._room.get_objects()) >= 0:
+                self._rect.move_ip(0, -5)
         if pressed_keys[K_LEFT]:
-            self.surf = self.animator.get_next('left')
-            self.rect.move_ip(-5, 0)
-            if pygame.Rect.collidelist(self.rect,
-                                       self.room.get_objects()) >= 0:
-                self.rect.move_ip(5, 0)
+            self._surf = self._animator.get_next('left')
+            self._rect.move_ip(-5, 0)
+            if pygame.Rect.collidelist(self._rect,
+                                       self._room.get_objects()) >= 0:
+                self._rect.move_ip(5, 0)
         if pressed_keys[K_RIGHT]:
-            self.surf = self.animator.get_next('right')
-            self.rect.move_ip(5, 0)
-            if pygame.Rect.collidelist(self.rect,
-                                       self.room.get_objects()) >= 0:
-                self.rect.move_ip(-5, 0)
+            self._surf = self._animator.get_next('right')
+            self._rect.move_ip(5, 0)
+            if pygame.Rect.collidelist(self._rect,
+                                       self._room.get_objects()) >= 0:
+                self._rect.move_ip(-5, 0)
         if pressed_keys[K_s]:
             self.say('Oi get off my piano')
             #self.say('Did you ever hear the Tragedy of Darth Plagueis the wise? I thought not. Its not a story the Jedi would tell you. Its a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life... He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural. He became so powerful... the only thing he was afraid of was losing his power, which eventually, of course, he did. Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. Its ironic he could save others from death, but not himself')
         if pressed_keys[K_SPACE]:
-            if pygame.time.get_ticks() - self.start_time > 500:
-                self.interact = True
-                self.start_time = pygame.time.get_ticks()
+            if pygame.time.get_ticks() - self._start_time > 500:
+                self._interact = True
+                self._start_time = pygame.time.get_ticks()
         if pressed_keys[K_TAB]:
-            if pygame.time.get_ticks() - self.start_time > 500:
-                self.guiding = True
-                self.start_time = pygame.time.get_ticks()
-        if pygame.time.get_ticks() - self.start_time > 100:
-            self.interact = False
+            if pygame.time.get_ticks() - self._start_time > 500:
+                self._guiding = True
+                self._start_time = pygame.time.get_ticks()
+        if pygame.time.get_ticks() - self._start_time > 100:
+            self._interact = False
 
     def interacting(self):
         """
@@ -153,8 +162,8 @@ class Player(Character):
         Returns:
             True is the player is interacting, False otherwise.
         """
-        if self.interact:
-            self.interact = False
+        if self._interact:
+            self._interact = False
             return True
         else:
             return False
@@ -166,8 +175,8 @@ class Player(Character):
         Returns:
             True if the player is attempting to interact, False otherwise.
         """
-        if self.guiding:
-            self.guiding = False
+        if self._guiding:
+            self._guiding = False
             return True
         else:
             return False
@@ -182,14 +191,15 @@ class Player(Character):
             index: the specific entrance of the room at which to spawn
                 (defaults to the first entrance, index 0)
         """
-        self.room = room
-        self.rect.centerx = self.room.get_entrance(str)[0]
-        self.rect.centery = self.room.get_entrance(str)[1]
+        self._room = room
+        print(room.get_name())
+        self._rect.centerx = self._room.get_entrance(str)[0]
+        self._rect.centery = self._room.get_entrance(str)[1]
 
-    def is_exiting(self, room):
-        for exit in room.get_exits():
-            if self.rect.colliderect(exit[0]):
-                return [exit[1], room.name]
+    def is_exiting(self):
+        for exit in self._room.get_exits():
+            if self._rect.colliderect(exit[0]):
+                return [exit[1], self._room.get_name()]
         return None
 
     def spotlight_on(self):
@@ -200,7 +210,7 @@ class Player(Character):
         as the player moves. It creates the effect of a small circle of light
         around the player while obscuring the rest of the room.
         """
-        self.spotlight = True
+        self._spotlight = True
 
     def spotlight_off(self):
         """
@@ -210,15 +220,15 @@ class Player(Character):
         as the player moves. It creates the effect of a small circle of light
         around the player while obscuring the rest of the room.
         """
-        self.spotlight = False
+        self._spotlight = False
 
     def update(self, screen):
         """
         Update the player, and spotlight if necessary
         """
-        if self.spotlight:
-            self.spotlight_rect.center = (self.get_pos()[0], self.get_pos()[1])
-            screen.blit(self.spotlight_surf, self.spotlight_rect)
+        if self._spotlight:
+            self._spotlight_rect.center = (self.get_pos()[0], self.get_pos()[1])
+            screen.blit(self._spotlight_surf, self._spotlight_rect)
         super().update(screen)
 
 
@@ -244,7 +254,7 @@ class NPC(Character):
         Returns:
 
         """
-        self.rect = self.rect.move(x, y)
+        self._rect = self._rect.move(x, y)
 
     def move(self, direction):
         """
@@ -258,26 +268,14 @@ class NPC(Character):
 
         """
         if direction == 'up':
-            self.surf = self.animator.get_next('back')
-            self.rect.move_ip(0, -5)
-            if pygame.Rect.collidelist(self.rect,
-                                       self.room.get_objects()) >= 0:
-                self.rect.move_ip(0, 5)
+            self._surf = self._animator.get_next('back')
+            self._rect.move_ip(0, -5)
         if direction == 'down':
-            self.surf = self.animator.get_next('front')
-            self.rect.move_ip(0, 5)
-            if pygame.Rect.collidelist(self.rect,
-                                       self.room.get_objects()) >= 0:
-                self.rect.move_ip(0, -5)
+            self._surf = self._animator.get_next('front')
+            self._rect.move_ip(0, 5)
         if direction == 'left':
-            self.surf = self.animator.get_next('left')
-            self.rect.move_ip(-5, 0)
-            if pygame.Rect.collidelist(self.rect,
-                                       self.room.get_objects()) >= 0:
-                self.rect.move_ip(5, 0)
+            self._surf = self._animator.get_next('left')
+            self._rect.move_ip(-5, 0)
         if direction == 'right':
-            self.surf = self.animator.get_next('right')
-            self.rect.move_ip(5, 0)
-            if pygame.Rect.collidelist(self.rect,
-                                       self.room.get_objects()) >= 0:
-                self.rect.move_ip(-5, 0)
+            self._surf = self._animator.get_next('right')
+            self._rect.move_ip(5, 0)

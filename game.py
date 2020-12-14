@@ -24,12 +24,19 @@ class Game:
         pygame.key.set_repeat(100, 100)
 
         self.clock = pygame.time.Clock()
+        self.rooms = [
+            environment.Room('lightforestentrance'),
+            environment.Room('lightforest1'),
+            environment.Room('lightforest2'),
+            environment.Room('darkforestcampfire'),
+            environment.Room('maze'),
+            environment.Room('innlobby')
+        ]
+        self.current_room = self.rooms[0]
+        self.background = environment.Background('daysky')
+        #self.guide = environment.Guide()
 
-        self.room = environment.Room('innlobby')
-        self.background = environment.Background('nightsky')
-        self.guide = environment.Guide()
-
-        self.player = character.Player('turtle2')
+        self.player = character.Player('player')
         #self.npc = character.NPC('turtle')
 
     def intro(self):
@@ -61,10 +68,11 @@ class Game:
         Update all game components
         """
         self.background.update(self.screen)
-        self.room.update(self.screen, self.player)
+        self.current_room.update(self.screen, self.player)
         #self.npc.update(self.screen)
         self.player.update(self.screen)
-        self.guide.update(self.screen, self.player)
+        if 'self.guide' in locals() or 'self.guide' in globals():
+            self.guide.update(self.screen, self.player)
 
     def run(self):
         """
@@ -73,7 +81,7 @@ class Game:
         #self.intro()
         running = True
         #self.npc.move(500, 500)
-        self.player.spawn(self.room, 'maze')
+        self.player.spawn(self.current_room, 'initial')
 
         while running:
             # Look at every event in the queue
@@ -89,10 +97,10 @@ class Game:
                     running = False
             #if self.player.collide(self.npc):
                 #self.npc.say('Ow!!')
-            if (self.player.is_exiting(self.room) is not None) and self.room.is_clear():
-                rooms = self.player.is_exiting(self.room)
-                self.room = environment.Room(rooms[0])
-                self.player.spawn(self.room, rooms[1])
+            if self.room_manager() and (self.player.is_exiting() is not None):
+                rooms = self.player.is_exiting()
+                self.current_room = [room for room in self.rooms if room.get_name() == rooms[0]][0]
+                self.player.spawn(self.current_room, rooms[1])
 
             self.player.move(pygame.key.get_pressed())
             self.update()
@@ -104,4 +112,32 @@ class Game:
             self.clock.tick(30)
         # Done! Time to quit.
         pygame.quit()
+
+    def room_manager(self):
+        if self.current_room == self.rooms[0]:
+            return self.room0()
+        elif self.current_room == self.rooms[1]:
+            return self.room1()
+
+
+    def room0(self):
+        tutorial_man = self.current_room.npcs[0]
+        if (self.player.get_pos()[0] > 200 or tutorial_man.get_pos()[0] < 1090) and tutorial_man.get_pos()[0] > 500:
+            tutorial_man.move('left')
+            tutorial_man.say_once('Don\'t go into that forest, it\'s big and spooky!')
+        if self.player.get_pos()[0] > 600 and tutorial_man.get_pos()[0] <= 500 and tutorial_man.is_speaking() == False:
+            tutorial_man.say_once('If you must go into the forest, at least take this advice: if you'
+                                  ' see anything that highlights in yellow, you can'
+                                  ' interact with it by pressing spacebar')
+        if tutorial_man.is_speaking() == False and self.player.collide(tutorial_man):
+            tutorial_man.say('if you see anything that highlights in yellow, you can'
+                             ' interact with it by pressing spacebar')
+        if self.rooms[0].is_clear() and tutorial_man.is_speaking() == False:
+            return True
+        return False
+
+    def room1(self):
+        if self.rooms[1].is_clear():
+            return True
+        return False
 
