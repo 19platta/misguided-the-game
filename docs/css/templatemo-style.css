@@ -47,7 +47,7 @@ a:hover {
 }
 
 .tm-bg-dark-gray {
-  background-color: #eeeeee;
+  background-color: #000000;
 }
 
 h2 {
@@ -126,11 +126,15 @@ p {
 }
 
 .tm-text-primary-bright {
-  color: #3399ff;
+  color: #b917ff;
+}
+
+.tm-text-primary-dark {
+  color: #000000;
 }
 
 .tm-hr-primary-bright {
-  border-color: #3399ff;
+  border-color: #b917ff;
 }
 
 .tm-hr-white {
@@ -935,6 +939,11 @@ hr {
 
   .tm-sm-bg-white-alpha {
     background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+  }
+
+  .tm-bg-black {
+    background-color: rgb(0, 0, 0);
     padding: 5px;
   }
 
