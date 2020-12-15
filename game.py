@@ -29,15 +29,26 @@ class Game:
             environment.Room('lightforest1'),
             environment.Room('lightforest2'),
             environment.Room('darkforestcampfire'),
+            environment.Room('darkforest1'),
             environment.Room('maze'),
+            environment.Room('innoutside'),
             environment.Room('innlobby')
         ]
-        self.current_room = self.rooms[0]
-        self.background = environment.Background('daysky')
+        self.current_room = self.rooms[3]
+        self.backgrounds = [
+            environment.Background('daysky'),
+            environment.Background('nightsky'),
+            environment.Background('twilightsky')
+        ]
+        self.current_background = self.backgrounds[0]
         #self.guide = environment.Guide()
 
         self.player = character.Player('player')
         #self.npc = character.NPC('turtle')
+
+        self.guide = None
+
+        self.conversations = []
 
     def intro(self):
         #pygame.mixer.music.load('Media/music/Theme_Fast.mp3')
@@ -67,11 +78,11 @@ class Game:
         """
         Update all game components
         """
-        self.background.update(self.screen)
+        self.current_background.update(self.screen)
         self.current_room.update(self.screen, self.player)
         #self.npc.update(self.screen)
         self.player.update(self.screen)
-        if 'self.guide' in locals() or 'self.guide' in globals():
+        if self.guide != None:
             self.guide.update(self.screen, self.player)
 
     def run(self):
@@ -81,7 +92,7 @@ class Game:
         #self.intro()
         running = True
         #self.npc.move(500, 500)
-        self.player.spawn(self.current_room, 'initial')
+        self.player.spawn(self.current_room, 'lightforest2')
 
         while running:
             # Look at every event in the queue
@@ -105,7 +116,8 @@ class Game:
             self.player.move(pygame.key.get_pressed())
             self.update()
             # This line is for debugging boundaries
-            #self.room.draw_objects(self.screen)
+            #self.current_room.draw_objects(self.screen)
+            #self.player.draw_rect(self.screen)
             pygame.display.flip()
             self.screen.fill((0, 0, 0))
 
@@ -113,11 +125,34 @@ class Game:
         # Done! Time to quit.
         pygame.quit()
 
+    def conversation(self, p1, p2):
+        if len(self.conversations) > 0:
+            if not p2.is_speaking() and not p1.is_speaking():
+                if len(self.conversations) % 2 == 1:
+                    p1.say_once(self.conversations[0])
+                    del self.conversations[0]
+                else:
+                    p2.say_once(self.conversations[0])
+                    del self.conversations[0]
+            return True
+        else:
+            return False
+
     def room_manager(self):
         if self.current_room == self.rooms[0]:
             return self.room0()
         elif self.current_room == self.rooms[1]:
             return self.room1()
+        elif self.current_room == self.rooms[2]:
+            return self.room2()
+        elif self.current_room == self.rooms[3]:
+            return self.room3()
+        elif self.current_room == self.rooms[4]:
+            return self.room4()
+        elif self.current_room == self.rooms[5]:
+            return self.room5()
+        elif self.current_room == self.rooms[6]:
+            return self.room6()
 
 
     def room0(self):
@@ -141,3 +176,87 @@ class Game:
             return True
         return False
 
+    def room2(self):
+        if self.rooms[2].is_clear():
+            self.player.spotlight_on()
+            for filename in sorted(os.listdir('Media/misc/teleport')):
+                self.player.spotlight_image(os.path.join('Media/misc/teleport', filename))
+                self.update()
+                pygame.display.flip()
+                pygame.time.wait(200)
+            self.player.spotlight_off()
+            return True
+        return False
+
+    def room3(self):
+        turtle = self.current_room.npcs[0]
+        self.current_background = self.backgrounds[2]
+        if self.player.collide(turtle):
+            self.conversation(turtle, self.player)
+        if self.rooms[3].is_clear():
+            if len(self.rooms[3].interactables) > 0:
+                del self.rooms[3].interactables[0]
+                self.guide = environment.Guide()
+                self.guide.update_text()
+                self.conversations = ['Oh look, it\'s a book! I bet you can'
+                                      ' open it by pressing TAB. Those guides'
+                                      ' are never wrong but I wouldn\'t trust'
+                                      ' it if I were you.', 'Where am I?',
+                                      'Well you\'re here, obviously. You just '
+                                      'appeared. You must have come through the'
+                                      ' mushroom ring.'
+                                      ]
+            if turtle.get_pos()[0] < 490:
+                turtle.move('right')
+                turtle.say_once('What have you got there?')
+            if not self.conversations:
+                return True
+        return False
+
+    def room4(self):
+        self.guide.update_text(2)
+        self.current_background = self.backgrounds[2]
+        turtle = self.current_room.npcs[0]
+        if self.player.collide(turtle) and not turtle.is_speaking():
+            turtle.say('Help help I lost my keys! They must be in one'
+                       ' of these leaf piles but I\'m too small to search'
+                       ' all of them. Will you help me find them?')
+        if self.rooms[4].interactables[0].is_end_state():
+            self.update()
+            pygame.display.flip()
+            pygame.time.wait(1000)
+            return True
+        return False
+
+    def room5(self):
+        self.guide.update_text(3)
+        self.player.spotlight_image()
+        self.player.spotlight_on()
+        self.player.say_once('Oof! I fell down a hole. I wonder if my guide'
+                             ' has any advice.')
+        if self.current_room.is_clear():
+            if len(self.current_room.interactables) > 0:
+                del self.current_room.interactables[0]
+                self.player.say_once('Found the key! Now I just have to'
+                                     ' get out of this maze.')
+            return True
+        return False
+
+    def room6(self):
+        self.guide.update_text(4)
+        self.current_background = self.backgrounds[1]
+        self.player.spotlight_off()
+        if 650 < self.player.get_pos()[0] < 750 and self.player.get_pos()[1] < 500:
+            self.player.say_once('Is anybody there?')
+            self.guide.update_text(5)
+            if not self.player.is_speaking():
+                self.player.say_once('Maybe that turtle can help me. I should go'
+                                     ' return his key.')
+        if self.current_room.is_clear():
+            return True
+        return False
+
+    def room7(self):
+        if self.rooms[1].is_clear():
+            return True
+        return False

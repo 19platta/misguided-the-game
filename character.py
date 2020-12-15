@@ -222,14 +222,33 @@ class Player(Character):
         """
         self._spotlight = False
 
+    def spotlight_image(self, img_path='Media/misc/spotlight/pixil-frame-0.png'):
+        self._spotlight_surf = pygame.image.load(img_path)
+        self._spotlight_rect = self._spotlight_surf.get_rect()
+
+    def draw_rect(self, screen):
+        """
+
+        Args:
+            screen:
+
+        Returns:
+
+        """
+        pygame.draw.rect(surface=screen, rect=self._rect,
+                         color=pygame.Color(0, 255, 0))
+
+
     def update(self, screen):
         """
         Update the player, and spotlight if necessary
         """
+        screen.blit(self._surf, self._rect)
         if self._spotlight:
             self._spotlight_rect.center = (self.get_pos()[0], self.get_pos()[1])
             screen.blit(self._spotlight_surf, self._spotlight_rect)
-        super().update(screen)
+        self._chatbox.update(screen)
+
 
 
 class NPC(Character):

@@ -272,8 +272,13 @@ class Guide(helpers.DataSprite):
         else:
             self._state = 'close'
 
-    def update_text(self):
-        self._current_index += 1
+    def update_text(self, idx=''):
+        if idx == '':
+            self._current_index += 1
+            self.notification()
+        elif idx > self._current_index:
+            self._current_index = idx
+            self.notification()
 
     def display_text(self, screen):
         """

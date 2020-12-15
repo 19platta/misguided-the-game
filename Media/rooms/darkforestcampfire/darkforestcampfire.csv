@@ -3,8 +3,8 @@ place,0,200,,,,
 spawn,50,480,,,,
 animator,0.2,,,,
 borders,,,,,,
-objects,0/0/20/500,0/120/1080/40,1060/0/20/500,0/460/1080/20,518/320/40/40,
-entrances,
-exits,
-interactables,
-npcs,
+objects,0/0/20/500,0/120/1080/40,1079/0/1/500,0/460/1080/20,518/320/40/40,
+entrances,60/480/lightforest2,1020/480/darkforest1
+exits,1060/0/20/700/darkforest1
+interactables,400/400/guide/2
+npcs, -100/500/turtle2
