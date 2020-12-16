@@ -2,7 +2,6 @@ import pygame
 import character
 import environment
 import os
-import interactables
 
 from pygame.locals import (
     K_ESCAPE,
@@ -51,7 +50,7 @@ class Game:
             environment.Room('innoutside'),
             environment.Room('innlobby')
         ]
-        self.current_room = self.rooms[6]
+        self.current_room = self.rooms[0]
         self.backgrounds = [
             environment.Background('daysky'),
             environment.Background('nightsky'),
@@ -61,13 +60,14 @@ class Game:
 
         self.player = character.Player('player')
 
-        self.guide = environment.Guide() #None
+        self.guide = None
 
         self.conversations = []
 
     def intro(self):
-        #pygame.mixer.music.load('Media/music/Theme_Fast.mp3')
-        #pygame.mixer.music.play()
+        """
+        Play an introduction animation at the beginning of the game. 
+        """
         intro = pygame.image.load("Media/wallpaper/copepod-studios.png")
         credit = True
         for i in range(225):
@@ -107,10 +107,10 @@ class Game:
         This function contains the main game loop and game logic. It will run
         the game until it is over or the player quits the game.
         """
-        #self.intro()
+        self.intro()
         running = True
 
-        self.player.spawn(self.current_room, 'maze')
+        self.player.spawn(self.current_room, 'initial')
 
         while running:
             # Look at every event in the queue
@@ -124,8 +124,6 @@ class Game:
                 # Did the user click the window close button? If so, stop the loop.
                 elif event.type == QUIT:
                     running = False
-            #if self.player.collide(self.npc):
-                #self.npc.say('Ow!!')
             if self.room_manager() and (self.player.is_exiting() is not None):
                 rooms = self.player.is_exiting()
                 self.current_room = [room for room in self.rooms if room.get_name() == rooms[0]][0]
@@ -172,7 +170,6 @@ class Game:
     def room_manager(self):
         """
         Run the correct room function based on which room the character is in.
-
         """
         if self.current_room == self.rooms[0]:
             return self.room0()
@@ -188,6 +185,8 @@ class Game:
             return self.room5()
         elif self.current_room == self.rooms[6]:
             return self.room6()
+        elif self.current_room == self.rooms[7]:
+            return self.room7()
 
     def room0(self):
         """
@@ -255,7 +254,9 @@ class Game:
                                       ' it if I were you.', 'Where am I?',
                                       'Well you\'re here, obviously. You just '
                                       'appeared. You must have come through the'
-                                      ' mushroom ring.'
+                                      ' mushroom ring.', 'How do I get back home?',
+                                      'I think you\'ll have to find another'
+                                      'mushroom ring. They only work once you know.'
                                       ]
             if turtle.get_pos()[0] < 490:
                 turtle.move('right')
@@ -288,26 +289,62 @@ class Game:
         if self.current_room.is_clear():
             if len(self.current_room.interactables) > 0:
                 del self.current_room.interactables[0]
+                self.player.inventory.append('key')
                 self.player.say_once('Found the key! Now I just have to'
                                      ' get out of this maze.')
             return True
         return False
 
     def room6(self):
+        turtle = self.current_room.npcs[0]
         self.guide.update_text(4)
         self.current_background = self.backgrounds[1]
         self.player.spotlight_off()
-        if 650 < self.player.get_pos()[0] < 750 and self.player.get_pos()[1] < 500:
-            self.player.say_once('Is anybody there?')
-            self.guide.update_text(5)
-            if not self.player.is_speaking():
-                self.player.say_once('Maybe that turtle can help me. I should go'
-                                     ' return his key.')
-        if self.current_room.is_clear():
-            return True
+        # Check to see if the player is at the inn door
+        if 600 < self.player.get_pos()[0] < 700 and self.player.get_pos()[1] < 470:
+            # If the player doesn't have the megaphone yet, the guide will update
+            # with a hint
+            if 'megaphone' not in self.player.inventory:
+                self.player.say_once('Is anybody there?')
+                self.guide.update_text(5)
+                if not self.player.is_speaking():
+                    self.player.say_once('Maybe the guide can help.')
+            # If the player has the megaphone, the stage is complete and the
+            # room is clear
+            else:
+                return True
+        # If the guide has given its hint, have the turtle walk in and set up
+        # the conversation
+        if not self.player.is_speaking() and turtle.get_pos()[0] < 300 and self.guide.get_index() == 5:
+            turtle.move('right')
+            self.conversations = [
+                'Hey! Did you find my key?',
+                ' I sure did, here you go.',
+                'Thanks! I don\'t have much to give you but you can have this'
+                ' old megaphone I found lying around if you want.'
+            ]
+        # If the player collides with the turtle, have the conversation and
+        # spawn the megaphone in the right place
+        if self.player.collide(turtle):
+            self.conversation(turtle, self.player)
+            if not (self.player.is_speaking() and turtle.is_speaking()):
+                if len(self.current_room.interactables) > 0 and len(self.conversations) == 0:
+                    self.current_room.interactables[0].place(300, 550)
+        # If the megaphone has been interacted with and is still in the room,
+        # remove it from the room and add to the player's inventory
+        # Also remove the key from the inventory
+        if self.current_room.is_clear() and len(self.current_room.interactables) > 0:
+            del self.current_room.interactables[0]
+            del self.player.inventory[self.player.inventory.index('key')]
+            self.player.inventory.append('megaphone')
         return False
 
     def room7(self):
-        if self.rooms[1].is_clear():
+        innkeeper = self.current_room.npcs[0]
+        if self.player.collide(innkeeper):
+            innkeeper.say_once('Welcome to the inn! You\'ll be safe here until'
+                               ' you start on the next part of your journey.'
+                               ' Thanks for playing chapter one! Come back soon'
+                               ' for more adventures.')
             return True
         return False

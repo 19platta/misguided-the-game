@@ -257,6 +257,9 @@ class Guide(helpers.DataSprite):
         if self._state == 'open':
             self.display_text(screen)
 
+    def get_index(self):
+        return self._current_index
+
     def notification(self):
         """
         Show a notification
