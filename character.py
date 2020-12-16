@@ -7,13 +7,8 @@ from pygame.locals import (
     K_DOWN,
     K_LEFT,
     K_RIGHT,
-    K_s,
     K_SPACE,
     K_TAB,
-    K_ESCAPE,
-    KEYDOWN,
-    QUIT,
-    RLEACCEL,
 )
 
 
@@ -199,7 +194,6 @@ class Player(Character):
 
         Returns:
             True if the character is at an exit, False otherwise.
-
         """
         for room_exit in self._room.get_exits():
             if self._rect.colliderect(room_exit[0]):
@@ -208,7 +202,7 @@ class Player(Character):
 
     def spotlight_on(self):
         """
-        Switches the spotlight on.
+        Switch the spotlight on.
 
         A spotlight is a transparent circle in a black background that moves
         as the player moves. It creates the effect of a small circle of light
@@ -218,7 +212,7 @@ class Player(Character):
 
     def spotlight_off(self):
         """
-        Switches the spotlight off.
+        Switch the spotlight off.
 
         A spotlight is a transparent circle in a black background that moves
         as the player moves. It creates the effect of a small circle of light
@@ -250,7 +244,7 @@ class Player(Character):
         boundaries are causing movement problems.
 
         Args:
-            screen: the screen to update to
+            screen: the screen to draw to
         """
         pygame.draw.rect(surface=screen, rect=self._rect,
                          color=pygame.Color(0, 255, 0))
@@ -260,7 +254,7 @@ class Player(Character):
         Update the player, and spotlight if necessary
 
         Args:
-            screen: the screen to update to
+            screen: the screen to draw to
         """
         screen.blit(self._surf, self._rect)
         # If the spotlight is active, show it at the same place as the
@@ -273,7 +267,7 @@ class Player(Character):
 
 class NPC(Character):
     """
-    Creates a non-playable character (NPC) sprite from a .csv file
+    Create a non-playable character (NPC) sprite from a .csv file
 
     Inherits from Character
     """
@@ -295,9 +289,6 @@ class NPC(Character):
                 to spawn the NPC at
             y: an int representing the y coordinate (from top to bottom)
                 to spawn the NPC at
-
-        Returns:
-
         """
         self._rect = self._rect.move(x, y)
 

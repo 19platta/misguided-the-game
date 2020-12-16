@@ -27,6 +27,7 @@ class Game:
             point in the story
 
     """
+
     def __init__(self):
         """
         Initialize an instance of the Game class.
@@ -83,7 +84,7 @@ class Game:
         # Main opening screen of Misguided
         filelist = sorted(os.listdir('Media/wallpaper/introsequence'))
         for file in filelist:
-            intro = pygame.image.load('Media/wallpaper/introsequence/'+file)
+            intro = pygame.image.load('Media/wallpaper/introsequence/' + file)
             self.screen.blit(intro, [0, 0])
             pygame.display.flip()
             self.clock.tick(6)
@@ -127,14 +128,16 @@ class Game:
                     if event.key == K_ESCAPE:
                         running = False
 
-                # Did the user click the window close button? If so, stop the loop.
+                # Did the user click the window close button?
+                # If so, stop the loop.
                 elif event.type == QUIT:
                     running = False
             # Run the room specific functions through room manager, and handle
             # the case in which the player tries to exit the room
             if self.room_manager() and (self.player.is_exiting() is not None):
                 rooms = self.player.is_exiting()
-                self.current_room = [room for room in self.rooms if room.get_name() == rooms[0]][0]
+                self.current_room = [room for room in self.rooms
+                                     if room.get_name() == rooms[0]][0]
                 self.player.spawn(self.current_room, rooms[1])
             # Move the player based on input, then update everything
             self.player.move(pygame.key.get_pressed())
@@ -211,19 +214,26 @@ class Game:
                 otherwise
         """
         tutorial_man = self.current_room.npcs[0]
-        # If the player passes the initial boundary, tutorial man walks over and speaks
-        if (self.player.get_pos()[0] > 200 or tutorial_man.get_pos()[0] < 1090) and tutorial_man.get_pos()[0] > 500:
+        # If the player passes the initial boundary, tutorial man walks
+        # over and speaks
+        if (self.player.get_pos()[0] > 200 or tutorial_man.get_pos()[0] < 1090)\
+                and tutorial_man.get_pos()[0] > 500:
             tutorial_man.move('left')
-            tutorial_man.say_once('Don\'t go into that forest, it\'s big and spooky!')
+            tutorial_man.say_once('Don\'t go into that forest, it\'s big and '
+                                  'spooky!')
         # If the player starts heading into the forest, tutorial man speaks
-        if self.player.get_pos()[0] > 600 and tutorial_man.get_pos()[0] <= 500 and tutorial_man.is_speaking() == False:
-            tutorial_man.say_once('If you must go into the forest, at least take this advice: if you'
-                                  ' see anything that highlights in yellow, you can'
-                                  ' interact with it by pressing spacebar')
+        if self.player.get_pos()[0] > 600 and tutorial_man.get_pos()[0] <= 500\
+                and tutorial_man.is_speaking() is False:
+            tutorial_man.say_once('If you must go into the forest, '
+                                  'at least take this advice: if you'
+                                  ' see anything that highlights in yellow, '
+                                  'you can interact with it by pressing '
+                                  'spacebar')
         # If the player walks up to tutorial man, he speaks
-        if tutorial_man.is_speaking() is False and self.player.collide(tutorial_man):
-            tutorial_man.say('if you see anything that highlights in yellow, you can'
-                             ' interact with it by pressing spacebar')
+        if tutorial_man.is_speaking() is False and \
+                self.player.collide(tutorial_man):
+            tutorial_man.say('if you see anything that highlights in yellow,'
+                             ' you can interact with it by pressing spacebar')
         # If tutorial man is not speaking, the player can exit
         if self.current_room.is_clear() and tutorial_man.is_speaking() is False:
             return True
@@ -237,7 +247,7 @@ class Game:
         Mostly for establishment.
 
         Returns:
-            True if the room is clear, False otherwise. 
+            True if the room is clear, False otherwise.
         """
         if self.current_room.is_clear():
             return True
@@ -259,7 +269,8 @@ class Game:
             # Iterate through the teleport animation, and freeze the player
             # in place so they can't move
             for filename in sorted(os.listdir('Media/misc/teleport')):
-                self.player.spotlight_image(os.path.join('Media/misc/teleport', filename))
+                self.player.spotlight_image(os.path.join('Media/misc/teleport',
+                                                         filename))
                 self.update()
                 pygame.display.flip()
                 pygame.time.wait(200)
@@ -293,16 +304,17 @@ class Game:
                 del self.rooms[3].interactables[0]
                 self.guide = environment.Guide()
                 self.guide.update_text()
-                self.conversations = ['Oh look, it\'s a book! I bet you can'
-                                      ' open it by pressing TAB. Those guides'
-                                      ' are never wrong but I wouldn\'t trust'
-                                      ' it if I were you.', 'Where am I?',
-                                      'Well you\'re here, obviously. You just '
-                                      'appeared. You must have come through the'
-                                      ' mushroom ring.', 'How do I get back home?',
-                                      'I think you\'ll have to find another'
-                                      'mushroom ring. They only work once you know.'
-                                      ]
+                self.conversations = [
+                    'Oh look, it\'s a book! I bet you can open it by pressing'
+                    ' TAB. Those guides are never wrong but I wouldn\'t trust'
+                    ' it if I were you.',
+                    'Where am I?',
+                    'Well you\'re here, obviously. You just appeared. You must'
+                    ' have come through the mushroom ring.',
+                    'How do I get back home?',
+                    'I think you\'ll have to find another mushroom ring. '
+                    'They only work once you know.'
+                ]
             if turtle.get_pos()[0] < 490:
                 turtle.move('right')
                 turtle.say_once('What have you got there?')
@@ -393,9 +405,10 @@ class Game:
         self.current_background = self.backgrounds[1]
         self.player.spotlight_off()
         # Check to see if the player is at the inn door
-        if 600 < self.player.get_pos()[0] < 700 and self.player.get_pos()[1] < 470:
-            # If the player doesn't have the megaphone yet, the guide will update
-            # with a hint
+        if 600 < self.player.get_pos()[0] < 700 and \
+                self.player.get_pos()[1] < 470:
+            # If the player doesn't have the megaphone yet, the guide will
+            # update with a hint
             if 'megaphone' not in self.player.inventory:
                 self.player.say_once('Is anybody there?')
                 self.guide.update_text(5)
@@ -407,7 +420,8 @@ class Game:
                 return True
         # If the guide has given its hint, have the turtle walk in and set up
         # the conversation
-        if not self.player.is_speaking() and turtle.get_pos()[0] < 300 and self.guide.get_index() == 5:
+        if not self.player.is_speaking() and turtle.get_pos()[0] < 300 \
+                and self.guide.get_index() == 5:
             turtle.move('right')
             self.conversations = [
                 'Hey! Did you find my key?',
@@ -420,12 +434,14 @@ class Game:
         if self.player.collide(turtle):
             self.conversation(turtle, self.player)
             if not (self.player.is_speaking() and turtle.is_speaking()):
-                if len(self.current_room.interactables) > 0 and len(self.conversations) == 0:
+                if len(self.current_room.interactables) > 0 and \
+                        len(self.conversations) == 0:
                     self.current_room.interactables[0].place(300, 550)
         # If the megaphone has been interacted with and is still in the room,
         # remove it from the room and add to the player's inventory
         # Also remove the key from the inventory
-        if self.current_room.is_clear() and len(self.current_room.interactables) > 0:
+        if self.current_room.is_clear() and \
+                len(self.current_room.interactables) > 0:
             del self.current_room.interactables[0]
             del self.player.inventory[self.player.inventory.index('key')]
             self.player.inventory.append('megaphone')
