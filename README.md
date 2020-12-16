@@ -10,7 +10,7 @@ The main installation required for this project is conda python (3.8) which can 
 
 This project also requires pygame, which can be installed from https://www.pygame.org/wiki/GettingStarted
 
-Although not required to be able to run the game, the test framework for this project requires pytest, which can be found here https://docs.pytest.org/en/stable/getting-started.html
+Although not required to be able to run the game, the test framework for this project requires pytest, which can be found here https://docs.pytest.org/en/stable/getting-started.html. To run our tests, run the file `game_test.py` and ensure all tests pass.
 
 ## File Structure
 
@@ -58,3 +58,7 @@ The `.csv` files contain data that varies from object to object. The first row d
 * exits: each col represents an exit rectangle for a player in the form `topleft_x/topleft_y/width_x/height_y/room_to_exit_to`. Common among all rooms.
 * interactables: define interactables contained in a room instance, which will be initialized by the room in the form `x_pos/y_pox/name_of_interactable/end_state` where end state determines if the room is clear based on the state of all interactables. Common among all rooms.
 * npcs: define npcs contained in a room instance, which will be initialized by the room in the form `x_pos/y_pos/name_of_npc/`. Common among all rooms.
+
+## Repurposing the Framework
+
+To repurpose this framework for your own game, simply create your characters, rooms, backgrounds, npcs, or whatever else you desire. Then, in the `game.py` file, delete the content of our room functions and write your own sequence of events using your own characters and art.
