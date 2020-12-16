@@ -8,13 +8,30 @@ from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
     QUIT,
-    K_KP_ENTER,
 )
 
 
 class Game:
+    """
+    Class representing the Game state, controlling the interactions between
+    the other classes, and running the game.
 
+    Attributes:
+        screen:
+        clock:
+        rooms: a list of all the room instances in the game
+        current_room: the room the player is currently in
+        backgrounds: a list of all the background instances in the game
+        current_background: the background currently being displayed
+        player: player controlled character, instance of the Player class
+        guide: starts as None, becomes instance of Guide at appropriate
+            point in the story
+
+    """
     def __init__(self):
+        """
+        Initialize an instance of the Game class.
+        """
         # 500 / 250 / 125 room height
         SCREEN_HEIGHT = 700  # 350 or 175 or 88
         SCREEN_WIDTH = 1080  # 540 or 270 or 135
@@ -41,10 +58,8 @@ class Game:
             environment.Background('twilightsky')
         ]
         self.current_background = self.backgrounds[0]
-        #self.guide = environment.Guide()
 
         self.player = character.Player('player')
-        #self.npc = character.NPC('turtle')
 
         self.guide = None
 
@@ -87,11 +102,14 @@ class Game:
 
     def run(self):
         """
+        Run the game.
 
+        This function contains the main game loop and game logic. It will run
+        the game until it is over or the player quits the game.
         """
         #self.intro()
         running = True
-        #self.npc.move(500, 500)
+
         self.player.spawn(self.current_room, 'lightforest2')
 
         while running:
@@ -126,7 +144,20 @@ class Game:
         pygame.quit()
 
     def conversation(self, p1, p2):
+        """
+        Have a conversation between two characters where neither interrupts
+        the other.
+
+        Assumes that self.conversations has been set to contain the lines the
+        characters will say, beginning with p1's first line.
+
+        Args:
+            p1: the first character to speak
+            p2: the second character to speak
+        """
+        # Check to see if there is anything to say
         if len(self.conversations) > 0:
+            # Make sure the characters don't talk over each other
             if not p2.is_speaking() and not p1.is_speaking():
                 if len(self.conversations) % 2 == 1:
                     p1.say_once(self.conversations[0])
@@ -139,6 +170,10 @@ class Game:
             return False
 
     def room_manager(self):
+        """
+        Run the correct room function based on which room the character is in.
+
+        """
         if self.current_room == self.rooms[0]:
             return self.room0()
         elif self.current_room == self.rooms[1]:
@@ -154,8 +189,17 @@ class Game:
         elif self.current_room == self.rooms[6]:
             return self.room6()
 
-
     def room0(self):
+        """
+        First room of the game.
+
+        In this room the player meets the tutorial NPC who tells them how to
+        interact with objects.
+
+        Returns:
+            True if the NPC has finished talking and the room is clear, False
+                otherwise
+        """
         tutorial_man = self.current_room.npcs[0]
         if (self.player.get_pos()[0] > 200 or tutorial_man.get_pos()[0] < 1090) and tutorial_man.get_pos()[0] > 500:
             tutorial_man.move('left')
@@ -164,15 +208,22 @@ class Game:
             tutorial_man.say_once('If you must go into the forest, at least take this advice: if you'
                                   ' see anything that highlights in yellow, you can'
                                   ' interact with it by pressing spacebar')
-        if tutorial_man.is_speaking() == False and self.player.collide(tutorial_man):
+        if tutorial_man.is_speaking() is False and self.player.collide(tutorial_man):
             tutorial_man.say('if you see anything that highlights in yellow, you can'
                              ' interact with it by pressing spacebar')
-        if self.rooms[0].is_clear() and tutorial_man.is_speaking() == False:
+        if self.current_room.is_clear() and tutorial_man.is_speaking() is False:
             return True
         return False
 
     def room1(self):
-        if self.rooms[1].is_clear():
+        """
+        Second room of the game. Player walks through unthreatening forest.
+        Mostly for establishment.
+
+        Returns:
+            True if the room is clear, False otherwise. 
+        """
+        if self.current_room.is_clear():
             return True
         return False
 
