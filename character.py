@@ -23,8 +23,8 @@ class Character(helpers.DataSprite):
 
     Attributes:
         Same as DataSprite, with the addition of
-        room: the room the character is currently in
-        chatbox: an instance of Chatbox used by the character
+        _room: the room the character is currently in
+        _chatbox: an instance of Chatbox used by the character
     """
     def __init__(self, data):
         super().__init__(data, 'characters/')
@@ -42,12 +42,10 @@ class Character(helpers.DataSprite):
 
     def update(self, screen):
         """
+        Update the character visuals on the screen.
 
         Args:
-            screen:
-
-        Returns:
-
+            screen: the screen to update to
         """
         screen.blit(self._surf, self._rect)
         self._chatbox.update(screen)
@@ -85,17 +83,19 @@ class Player(Character):
     Class representing a user-controlled character.
 
     Attributes:
-        interact: boolean indicating whether the player is
+        _interact: boolean indicating whether the player is
             interacting with an object of class Interactable
-        guiding: boolean indicating whether the player is interacting with
+        _guiding: boolean indicating whether the player is interacting with
             the guide
-        spotlight: boolean indicating whether the spotlight is on
+        _spotlight: boolean indicating whether the spotlight is on
             or off
-        spotlight_surf: the image representing the spotlight
-        spotlight_rect: contains the coordinates defining the
+        _spotlight_surf: the image representing the spotlight
+       _ spotlight_rect: contains the coordinates defining the
             spotlight's position
-        start_time: marks the in-game time of initialization, used for
+        _start_time: marks the in-game time of initialization, used for
             interaction
+        inventory: a list representing the items the character is currently
+            carrying
     """
     def __init__(self, img):
         super().__init__(img)
@@ -106,6 +106,7 @@ class Player(Character):
         self._spotlight_rect = self._spotlight_surf.get_rect()
         self._spotlight = False
         self._start_time = pygame.time.get_ticks()
+        self.inventory = []
 
     def move(self, pressed_keys):
         """
@@ -140,9 +141,6 @@ class Player(Character):
             if pygame.Rect.collidelist(self._rect,
                                        self._room.get_objects()) >= 0:
                 self._rect.move_ip(-5, 0)
-        if pressed_keys[K_s]:
-            self.say('Oi get off my piano')
-            #self.say('Did you ever hear the Tragedy of Darth Plagueis the wise? I thought not. Its not a story the Jedi would tell you. Its a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life... He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural. He became so powerful... the only thing he was afraid of was losing his power, which eventually, of course, he did. Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. Its ironic he could save others from death, but not himself')
         if pressed_keys[K_SPACE]:
             if pygame.time.get_ticks() - self._start_time > 500:
                 self._interact = True
@@ -188,18 +186,24 @@ class Player(Character):
 
         Args:
             room: the room object to spawn the character in
-            index: the specific entrance of the room at which to spawn
-                (defaults to the first entrance, index 0)
+            str: string containing the name of the room for the character to
+                spawn in
         """
         self._room = room
-        print(room.get_name())
         self._rect.centerx = self._room.get_entrance(str)[0]
         self._rect.centery = self._room.get_entrance(str)[1]
 
     def is_exiting(self):
-        for exit in self._room.get_exits():
-            if self._rect.colliderect(exit[0]):
-                return [exit[1], self._room.get_name()]
+        """
+        Determine if the character is at an exit to a room.
+
+        Returns:
+            True if the character is at an exit, False otherwise.
+
+        """
+        for room_exit in self._room.get_exits():
+            if self._rect.colliderect(room_exit[0]):
+                return [room_exit[1], self._room.get_name()]
         return None
 
     def spotlight_on(self):
@@ -222,53 +226,77 @@ class Player(Character):
         """
         self._spotlight = False
 
-    def spotlight_image(self, img_path='Media/misc/spotlight/pixil-frame-0.png'):
+    def spotlight_image(self,
+                        img_path='Media/misc/spotlight/pixil-frame-0.png'):
+        """
+        Set the image used for the spotlight.
+
+        This allows the spotlight to be anything that should remain at the
+        same location as the character, even if they move.
+
+        Args:
+            img_path: path to the image to use. Defaults to the black screen
+                with a transparent circle
+
+        """
         self._spotlight_surf = pygame.image.load(img_path)
         self._spotlight_rect = self._spotlight_surf.get_rect()
 
     def draw_rect(self, screen):
         """
+        Debug function used to see the full space the character is taking up.
+
+        This function is useful in conjunction with the `draw_objects`
+        function in the Room class to determine if the character rect or
+        boundaries are causing movement problems.
 
         Args:
-            screen:
-
-        Returns:
+            screen: the screen to update to
 
         """
         pygame.draw.rect(surface=screen, rect=self._rect,
                          color=pygame.Color(0, 255, 0))
 
-
     def update(self, screen):
         """
         Update the player, and spotlight if necessary
+
+        Args:
+            screen: the screen to update to
         """
         screen.blit(self._surf, self._rect)
+        # If the spotlight is active, show it at the same place as the
+        # character
         if self._spotlight:
             self._spotlight_rect.center = (self.get_pos()[0], self.get_pos()[1])
             screen.blit(self._spotlight_surf, self._spotlight_rect)
         self._chatbox.update(screen)
 
 
-
 class NPC(Character):
     """
     Creates a non-playable character (NPC) sprite from a .csv file
+
+    Inherits from Character
     """
     def __init__(self, img):
         """
+        Initialize an instance of class NPC.
 
         Args:
-            img:
+            img: the name of the NPC folder to use (for animation purposes)
         """
         super().__init__(img)
 
     def spawn(self, x, y):
         """
+        Spawn the NPC at the given coordinates.
 
         Args:
-            x:
-            y:
+            x: an int representing the x coordinate (from left to right)
+                to spawn the NPC at
+            y: an int representing the y coordinate (from top to bottom)
+                to spawn the NPC at
 
         Returns:
 
