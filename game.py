@@ -34,12 +34,13 @@ class Game:
         # 500 / 250 / 125 room height
         SCREEN_HEIGHT = 700  # 350 or 175 or 88
         SCREEN_WIDTH = 1080  # 540 or 270 or 135
-
         # Set up the drawing window
         self.screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
         pygame.key.set_repeat(100, 100)
-
+        # Set up the clock to limit ticks per second
         self.clock = pygame.time.Clock()
+        # Set up all the rooms the game will cycle through and
+        # initialize the first as the current room
         self.rooms = [
             environment.Room('lightforestentrance'),
             environment.Room('lightforest1'),
@@ -50,6 +51,8 @@ class Game:
             environment.Room('innoutside'),
             environment.Room('innlobby')
         ]
+        # Set up all the backgrounds the game will cycle through and
+        # initialize the first as the current background
         self.current_room = self.rooms[0]
         self.backgrounds = [
             environment.Background('daysky'),
@@ -57,11 +60,10 @@ class Game:
             environment.Background('twilightsky')
         ]
         self.current_background = self.backgrounds[0]
-
+        # Initialize the player, the guide (properly initialized later)
+        # and a list that can be used to store conversations
         self.player = character.Player('player')
-
         self.guide = None
-
         self.conversations = []
 
     def intro(self):
@@ -70,12 +72,15 @@ class Game:
         """
         intro = pygame.image.load("Media/wallpaper/copepod-studios.png")
         credit = True
+        # Fade in of copepod studios logo
         for i in range(225):
             intro.set_alpha(i)
             self.screen.blit(intro, [265, 200])
             pygame.display.flip()
             self.clock.tick(35)
+        # Delay for a short time
         self.clock.tick(60)
+        # Main opening screen of Misguided
         filelist = sorted(os.listdir('Media/wallpaper/introsequence'))
         for file in filelist:
             intro = pygame.image.load('Media/wallpaper/introsequence/'+file)
@@ -83,6 +88,7 @@ class Game:
             pygame.display.flip()
             self.clock.tick(6)
         pygame.event.clear()
+        # Wait for keypress to continue to the game
         while credit is True:
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
@@ -107,11 +113,12 @@ class Game:
         This function contains the main game loop and game logic. It will run
         the game until it is over or the player quits the game.
         """
+        # First run the intro
         self.intro()
         running = True
-
+        # Spawn the player
         self.player.spawn(self.current_room, 'initial')
-
+        # Main game loop
         while running:
             # Look at every event in the queue
             for event in pygame.event.get():
@@ -124,19 +131,23 @@ class Game:
                 # Did the user click the window close button? If so, stop the loop.
                 elif event.type == QUIT:
                     running = False
+            # Run the room specific functions through room manager, and handle
+            # the case in which the player tries to exit the room
             if self.room_manager() and (self.player.is_exiting() is not None):
                 rooms = self.player.is_exiting()
                 self.current_room = [room for room in self.rooms if room.get_name() == rooms[0]][0]
                 self.player.spawn(self.current_room, rooms[1])
-
+            # Move the player based on input, then update everything
             self.player.move(pygame.key.get_pressed())
             self.update()
-            # This line is for debugging boundaries
-            #self.current_room.draw_objects(self.screen)
-            #self.player.draw_rect(self.screen)
+            # These lines are for debugging boundaries
+            # self.current_room.draw_objects(self.screen)
+            # self.player.draw_rect(self.screen)
+
+            # Update the display based on the screen
             pygame.display.flip()
             self.screen.fill((0, 0, 0))
-
+            # Control the game ticks per second
             self.clock.tick(30)
         # Done! Time to quit.
         pygame.quit()
@@ -200,16 +211,20 @@ class Game:
                 otherwise
         """
         tutorial_man = self.current_room.npcs[0]
+        # If the player passes the initial boundary, tutorial man walks over and speaks
         if (self.player.get_pos()[0] > 200 or tutorial_man.get_pos()[0] < 1090) and tutorial_man.get_pos()[0] > 500:
             tutorial_man.move('left')
             tutorial_man.say_once('Don\'t go into that forest, it\'s big and spooky!')
+        # If the player starts heading into the forest, tutorial man speaks
         if self.player.get_pos()[0] > 600 and tutorial_man.get_pos()[0] <= 500 and tutorial_man.is_speaking() == False:
             tutorial_man.say_once('If you must go into the forest, at least take this advice: if you'
                                   ' see anything that highlights in yellow, you can'
                                   ' interact with it by pressing spacebar')
+        # If the player walks up to tutorial man, he speaks
         if tutorial_man.is_speaking() is False and self.player.collide(tutorial_man):
             tutorial_man.say('if you see anything that highlights in yellow, you can'
                              ' interact with it by pressing spacebar')
+        # If tutorial man is not speaking, the player can exit
         if self.current_room.is_clear() and tutorial_man.is_speaking() is False:
             return True
         return False
@@ -229,6 +244,8 @@ class Game:
     def room2(self):
         if self.rooms[2].is_clear():
             self.player.spotlight_on()
+            # Iterate through the teleport animation, and freeze the player
+            # in place so they can't move
             for filename in sorted(os.listdir('Media/misc/teleport')):
                 self.player.spotlight_image(os.path.join('Media/misc/teleport', filename))
                 self.update()
@@ -241,8 +258,12 @@ class Game:
     def room3(self):
         turtle = self.current_room.npcs[0]
         self.current_background = self.backgrounds[2]
+        # If the player walks up to the turtle, a conversation happens
         if self.player.collide(turtle):
             self.conversation(turtle, self.player)
+        # If the room is clear the player has picked up the book. In this
+        # case make the turtle walk out and speak. Also update the guide
+        # with some info
         if self.rooms[3].is_clear():
             if len(self.rooms[3].interactables) > 0:
                 del self.rooms[3].interactables[0]
@@ -261,6 +282,8 @@ class Game:
             if turtle.get_pos()[0] < 490:
                 turtle.move('right')
                 turtle.say_once('What have you got there?')
+            # If the conversation is empty, it has already happened, so allow
+            # the player to leave
             if not self.conversations:
                 return True
         return False
@@ -269,10 +292,14 @@ class Game:
         self.guide.update_text(2)
         self.current_background = self.backgrounds[2]
         turtle = self.current_room.npcs[0]
+        # If the player walks up to the turtle, he speaks
         if self.player.collide(turtle) and not turtle.is_speaking():
             turtle.say('Help help I lost my keys! They must be in one'
                        ' of these leaf piles but I\'m too small to search'
                        ' all of them. Will you help me find them?')
+        # If the player has interacted with the hidden trap door
+        # then the game stops for a second to show the trap door,
+        # then exits to the next level
         if self.rooms[4].interactables[0].is_end_state():
             self.update()
             pygame.display.flip()
@@ -282,10 +309,15 @@ class Game:
 
     def room5(self):
         self.guide.update_text(3)
+        # Reset the player's spotlight and turn it on because the room
+        # is dark
         self.player.spotlight_image()
         self.player.spotlight_on()
         self.player.say_once('Oof! I fell down a hole. I wonder if my guide'
                              ' has any advice.')
+        # If the player has picked up the key, the room is clear
+        # and can be exited. Also the player speaks when they pick
+        # up the key
         if self.current_room.is_clear():
             if len(self.current_room.interactables) > 0:
                 del self.current_room.interactables[0]
@@ -341,6 +373,7 @@ class Game:
 
     def room7(self):
         innkeeper = self.current_room.npcs[0]
+        # If the player walks up to the turtle, he speaks
         if self.player.collide(innkeeper):
             innkeeper.say_once('Welcome to the inn! You\'ll be safe here until'
                                ' you start on the next part of your journey.'

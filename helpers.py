@@ -32,18 +32,19 @@ class Animator:
         self._images = {}
         self._index = {}
         self._types = []
-
+        # Identifies all of the types as folders
         with os.scandir(pathname) as it:
             for entry in it:
                 if entry.is_dir():
                     self._types.append(entry.name)
-
+        # Identifies all the images in each type, and adds them to the _images
         for type in self._types:
             self._images[type] = []
             self._index[type] = 0
             for filename in sorted(os.listdir(pathname + '/' + type)):
                 img = pygame.image.load(os.path.join(pathname, type, filename))
                 self._images[type].append(Surface.convert_alpha(img))
+        # Sort _types so that it is correctly ordered
         self._types = sorted(self._types)
         self._current_type = self._types[0]
         self._update_speed = speed

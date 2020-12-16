@@ -37,17 +37,19 @@ class Room(helpers.DataSprite):
             data: the .csv file to use
         """
         super().__init__(data, 'rooms/')
-
+        # Initializes all the objects (boundaries) of the room
         self.objects = []
         for object in self._datafile.loc['objects'].dropna().values.tolist():
             object = [int(obj) for obj in object.split('/')]
             self.objects.append(pygame.Rect(object[0]+self._rect.left,
                                             object[1]+self._rect.top,
                                             object[2], object[3]))
+        # Initializes the room's entrances from the csv
         self.entrances = []
         for object in self._datafile.loc['entrances'].dropna().values.tolist():
             object = [obj for obj in object.split('/')]
             self.entrances.append([int(object[0]), int(object[1]), str(object[2])])
+        # Initializes the room's exits from the csv
         self.exits = []
         for object in self._datafile.loc['exits'].dropna().values.tolist():
             object = [obj for obj in object.split('/')]
@@ -55,11 +57,13 @@ class Room(helpers.DataSprite):
                                            int(object[1]),
                                            int(object[2]), int(object[3])),
                                str(object[4])])
+        # Initializes the room's interactables from the csv
         self.interactables = []
         for item in self._datafile.loc['interactables'].dropna().values.tolist():
             item = [i for i in item.split('/')]
             self.interactables.append(interactables.Interactable(str(item[2]), str(item[3])))
             self.interactables[-1].place(int(item[0]), int(item[1]))
+        # Initializes the room's npcs from the csv
         self.npcs = []
         for npc in self._datafile.loc['npcs'].dropna().values.tolist():
             npc = [i for i in npc.split('/')]
@@ -126,8 +130,10 @@ class Room(helpers.DataSprite):
 
         """
         super().update(screen)
+        # Updates all of the room's interactables
         for interactable in self.interactables:
             interactable.update(screen, player)
+        # Updates all of the room's npcs
         for npc in self.npcs:
             npc.update(screen)
 
