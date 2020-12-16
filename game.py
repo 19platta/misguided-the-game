@@ -51,7 +51,7 @@ class Game:
             environment.Room('innoutside'),
             environment.Room('innlobby')
         ]
-        self.current_room = self.rooms[3]
+        self.current_room = self.rooms[6]
         self.backgrounds = [
             environment.Background('daysky'),
             environment.Background('nightsky'),
@@ -61,7 +61,7 @@ class Game:
 
         self.player = character.Player('player')
 
-        self.guide = None
+        self.guide = environment.Guide() #None
 
         self.conversations = []
 
@@ -110,7 +110,7 @@ class Game:
         #self.intro()
         running = True
 
-        self.player.spawn(self.current_room, 'lightforest2')
+        self.player.spawn(self.current_room, 'maze')
 
         while running:
             # Look at every event in the queue
