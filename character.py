@@ -90,7 +90,7 @@ class Player(Character):
         _spotlight: boolean indicating whether the spotlight is on
             or off
         _spotlight_surf: the image representing the spotlight
-       _ spotlight_rect: contains the coordinates defining the
+        _spotlight_rect: contains the coordinates defining the
             spotlight's position
         _start_time: marks the in-game time of initialization, used for
             interaction
@@ -115,7 +115,6 @@ class Player(Character):
 
         Args:
             pressed_keys: Pygame event containing all pressed keys
-
         """
         if pressed_keys[K_UP]:
             self._surf = self._animator.get_next('back')
@@ -237,7 +236,6 @@ class Player(Character):
         Args:
             img_path: path to the image to use. Defaults to the black screen
                 with a transparent circle
-
         """
         self._spotlight_surf = pygame.image.load(img_path)
         self._spotlight_rect = self._spotlight_surf.get_rect()
@@ -252,7 +250,6 @@ class Player(Character):
 
         Args:
             screen: the screen to update to
-
         """
         pygame.draw.rect(surface=screen, rect=self._rect,
                          color=pygame.Color(0, 255, 0))
@@ -312,7 +309,6 @@ class NPC(Character):
 
         Args:
             direction: string containing the direction to move the character.
-
         """
         if direction == 'up':
             self._surf = self._animator.get_next('back')

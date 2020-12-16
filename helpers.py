@@ -24,6 +24,8 @@ class Animator:
             current index of each type (ie. how much of the motion has
             completed)
         _types: a list containing all the types as strings
+        _update_speed: a float representing how fast to update the animator,
+            where 1 is 1 frame per tick and 0.1 is 1 frame every 10 ticks
     """
     def __init__(self, pathname='Media/characters/turtle', speed=0.5):
         """
@@ -68,7 +70,7 @@ class Animator:
         """
         Updates the animator and increments the current type by 1, thereby
         creating motion visually. The type can also be changed with the
-        type parameter.
+        type parameter. Uses the _update_speed as a rate to increment at.
 
         Args:
             type: The type of the animator to update and get the next of, if
@@ -79,9 +81,12 @@ class Animator:
         if type == '':
             type = self._types[0]
         self._index[type] += 1
+        # If the index is out of bounds, it needs to revert to the first image
         if math.floor(self._index[type]*self._update_speed) >= len(self._images[type]):
             self._index[type] = 0
         self._current_type = type
+        # Return the image based on the update speed (a smaller update speed means
+        # it takes more get_next() calls to update the image, so a slower change.
         return self._images[type][math.floor(self._index[type]*self._update_speed)]
 
     def get_next_folder(self):
