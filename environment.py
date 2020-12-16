@@ -9,13 +9,19 @@ import character
 
 class Background(helpers.DataSprite):
     """
-    A class designed to represent a background
+    A class representing a background.
+
     Extracts attributes from a csv file.
 
     The reason this is a separate class is to maintain consistency. This
     allows us to set 'dir' as 'backgrounds/' for all instances of this class.
     """
     def __init__(self, data):
+        """
+        Initialize an instance of class Background.
+        Args:
+            data:
+        """
         super().__init__(data, 'backgrounds/')
 
 

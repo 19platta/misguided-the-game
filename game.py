@@ -16,12 +16,12 @@ class Game:
     the other classes, and running the game.
 
     Attributes:
-        screen:
-        clock:
+        screen: the window to draw visuals on
+        clock: Pygame clock object, keeps track of ingame time
         rooms: a list of all the room instances in the game
-        current_room: the room the player is currently in
+        current_room: the room instance the player is currently in
         backgrounds: a list of all the background instances in the game
-        current_background: the background currently being displayed
+        current_background: the background instance currently being displayed
         player: player controlled character, instance of the Player class
         guide: starts as None, becomes instance of Guide at appropriate
             point in the story
@@ -68,7 +68,7 @@ class Game:
 
     def intro(self):
         """
-        Play an introduction animation at the beginning of the game. 
+        Play an introduction animation at the beginning of the game.
         """
         intro = pygame.image.load("Media/wallpaper/copepod-studios.png")
         credit = True
@@ -101,9 +101,8 @@ class Game:
         """
         self.current_background.update(self.screen)
         self.current_room.update(self.screen, self.player)
-        #self.npc.update(self.screen)
         self.player.update(self.screen)
-        if self.guide != None:
+        if self.guide is not None:
             self.guide.update(self.screen, self.player)
 
     def run(self):
@@ -111,7 +110,7 @@ class Game:
         Run the game.
 
         This function contains the main game loop and game logic. It will run
-        the game until it is over or the player quits the game.
+        the game until the player quits.
         """
         # First run the intro
         self.intro()
@@ -157,8 +156,9 @@ class Game:
         Have a conversation between two characters where neither interrupts
         the other.
 
-        Assumes that self.conversations has been set to contain the lines the
-        characters will say, beginning with p1's first line.
+        Assumes that self.conversations is a list, and that its elements
+        have been set to contain the lines the characters will say, beginning
+        with the first speaker's first line.
 
         Args:
             p1: the first character to speak
@@ -201,7 +201,7 @@ class Game:
 
     def room0(self):
         """
-        First room of the game.
+        Run first room of the game.
 
         In this room the player meets the tutorial NPC who tells them how to
         interact with objects.
@@ -231,7 +231,9 @@ class Game:
 
     def room1(self):
         """
-        Second room of the game. Player walks through unthreatening forest.
+        Run second room of the game.
+
+        In this room, the player walks through unthreatening forest.
         Mostly for establishment.
 
         Returns:
@@ -242,7 +244,17 @@ class Game:
         return False
 
     def room2(self):
-        if self.rooms[2].is_clear():
+        """
+        Run third room of the game.
+
+        In this room, the player discovers a mushroom ring. When they interact
+        with it, it teleports them to a different world.
+
+        Returns:
+            True if the player has interacted with the mushroom ring and the
+                teleportation animation has played, False otherwise.
+        """
+        if self.current_room.is_clear():
             self.player.spotlight_on()
             # Iterate through the teleport animation, and freeze the player
             # in place so they can't move
@@ -256,6 +268,18 @@ class Game:
         return False
 
     def room3(self):
+        """
+        Run the fourth room of the game.
+
+        In this room, the player finds the guide, initializing an instance of
+        the Guide class, and talks to a turtle who explains how to open the
+        guide. The turtle also explains that to get home the player needs to
+        find another mushroom ring to get home, establishing the goal.
+
+        Returns:
+            True if the player has picked up the guide and finished talking to
+                the turtle, False otherwise.
+        """
         turtle = self.current_room.npcs[0]
         self.current_background = self.backgrounds[2]
         # If the player walks up to the turtle, a conversation happens
@@ -289,6 +313,18 @@ class Game:
         return False
 
     def room4(self):
+        """
+        Run the fifth room of the game.
+
+        In this room, the player meets another turtle who needs help looking
+        for his keys in the leaf pile. The player can interact with multiple
+        leaf piles, but a trapdoor exit is hidden under one pile that the
+        player "falls" through.
+
+        Returns:
+            True if the player has interacted with the trapdoor leaf pile,
+                False otherwise
+        """
         self.guide.update_text(2)
         self.current_background = self.backgrounds[2]
         turtle = self.current_room.npcs[0]
@@ -308,6 +344,18 @@ class Game:
         return False
 
     def room5(self):
+        """
+        Run the sixth room of the game.
+
+        This room is a maze the player must solve in the dark, with only a
+        small transparent circle of illumination around them. They must first
+        find the turtle's key, which is hidden in the maze, then find the exit.
+        The player's chatbox provides hints as to how to proceed.
+
+        Returns:
+            True if the player has collected the key and is at the maze exit,
+                False otherwise
+        """
         self.guide.update_text(3)
         # Reset the player's spotlight and turn it on because the room
         # is dark
@@ -328,6 +376,18 @@ class Game:
         return False
 
     def room6(self):
+        """
+        Run the sixth room of the game.
+
+        In this room, the player attempts to enter the inn. THey are not able
+        to at first, but the turtle enters and upon returning his key, he
+        provides the player with a megaphone, allowing them to shout loudly
+        enough to be heard in the inn.
+
+        Returns:
+            True if the megaphone is in the player's inventory and the player
+                is at the exit, False otherwise
+        """
         turtle = self.current_room.npcs[0]
         self.guide.update_text(4)
         self.current_background = self.backgrounds[1]
@@ -372,6 +432,21 @@ class Game:
         return False
 
     def room7(self):
+        """
+        Run the final room of the game.
+
+        This is the final room so far, though we hope to add more in future.
+        In this room the player enters the lobby of the inn and interacts with
+        the turtle innkeeper. The innkeeper tells them they will be safe here
+        until they set out again and thanks them for playing the first chapter,
+        indicating that this first part of the game is over.
+
+        To be continued...
+
+        Returns:
+            True if the player has interacted with the innkeeper and the
+                innkeeper has made his speech, False otherwise.
+        """
         innkeeper = self.current_room.npcs[0]
         # If the player walks up to the turtle, he speaks
         if self.player.collide(innkeeper):

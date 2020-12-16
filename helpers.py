@@ -18,16 +18,21 @@ class Animator:
     the directory are to be used as animator types, with images in each.
 
     Attributes:
-        images: a dictionary containing sets of images for each type, where
+        _images: a dictionary containing lists of images for each type, where
             the type is the key, and images are the values
-        index: a dictionary equivalent to images that instead contains the
+        _index: a dictionary equivalent to images that instead contains the
             current index of each type (ie. how much of the motion has
             completed)
-        types: a list containing all the types as strings
+        _types: a list containing all the types as strings
     """
     def __init__(self, pathname='Media/characters/turtle', speed=0.5):
         """
         Initialize an instance of class Animator
+
+        Args:
+            pathname: the path to the folder to use, defaults to turtle
+            speed: the speed at which the animator should change frames.
+                Defaults to 0.5
         """
         self._images = {}
         self._index = {}
@@ -67,7 +72,7 @@ class Animator:
 
         Args:
             type: The type of the animator to update and get the next of, if
-            blank, sets to the defaut first type (index 0)
+            blank, sets to the default first type (index 0)
         Returns:
             The next image in the specified type of the animator
         """
@@ -103,11 +108,11 @@ class DataSprite(pygame.sprite.Sprite):
     Media folder
 
     Attributes:
-        datafile: a pandas dataframe created from the .csv file
-        animator: an instance of the class Animator with properties derived
+        _datafile: a pandas dataframe created from the .csv file
+        _animator: an instance of the class Animator with properties derived
             from datafile
-        surf: a Sprite surf displaying the current state of animator
-        rect: a Sprite rect representing the current location of the Sprite,
+        _surf: a Sprite surf displaying the current state of animator
+        _rect: a Sprite rect representing the current location of the Sprite,
             specified by datafile
     """
     def __init__(self, data, dir):
@@ -123,7 +128,6 @@ class DataSprite(pygame.sprite.Sprite):
             dir: the directory to get to the file that holds the datasprite
         """
         super().__init__()
-
 
         # Create path and read the .csv defining the background
         path = 'Media/' + dir + data + "/" + data + '.csv'
