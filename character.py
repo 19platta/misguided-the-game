@@ -93,6 +93,7 @@ class Player(Character):
         _spotlight_rect: contains the coordinates defining the
             spotlight's position
         _start_time: marks the in-game time of initialization, used for
+        _start_time: marks the in-game time of initialization, used for
             interaction
         inventory: a list representing the items the character is currently
             carrying

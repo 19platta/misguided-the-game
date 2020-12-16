@@ -9,7 +9,7 @@ import character
 
 class Background(helpers.DataSprite):
     """
-    A class representing a background.
+    A class representing a background, inheriting from Datasprite
 
     Extracts attributes from a csv file.
 
@@ -27,20 +27,33 @@ class Background(helpers.DataSprite):
 
 class Room(helpers.DataSprite):
     """
-    A class representing a room, inheriting from Background
+    A class representing a room, inheriting from DataSprite.
 
     Attributes:
-        spawn: the location designated as a player spawn, as a list x,y
-        borders: the rectangular corners of a room [xmin, xmax, ymin, ymax]
         objects: a list of rects to use as obstacles that are impassable
+        entrances: a list of lists. Each list represents an entrance, with the
+            first two elements representing the x and y coordinates and the
+            third element representing the room the player has come from
+        exits: a list of lists. Each list represents an exit. The first two
+            elements represent the coordinates the exit begins at, and the
+            second two represent how many pixels the exit extends in the x and
+            y direction. The final element represents the room the exit leads
+            to
+        interactables: a list of lists. Each list represents an interactable,
+            where the first element is a string representing the name of the
+            interactable and the second element is an int representing the end
+            state of the interactable in that room
+        npcs: a list of instances of NPC objects, representing all the NPCs in
+            a room
     """
 
     def __init__(self, data):
         """
-        Initializes an instance of Room
+        Initializes an instance of Room.
 
         Args:
-            data: the .csv file to use
+            data: string representing the room folder (NOT the path to the
+                folder) to find the .csv in.
         """
         super().__init__(data, 'rooms/')
         # Initializes all the objects (boundaries) of the room
@@ -90,7 +103,7 @@ class Room(helpers.DataSprite):
 
     def get_exits(self):
         """
-        Access all possible exits from the room.
+        Accessor for the room exits.
 
         Returns:
             a list containing all the exits.
@@ -99,7 +112,7 @@ class Room(helpers.DataSprite):
 
     def get_objects(self):
         """
-        Accessor for the room objects
+        Accessor for the room objects.
 
         Returns:
              all object rects as a list
@@ -108,12 +121,15 @@ class Room(helpers.DataSprite):
 
     def draw_objects(self, screen):
         """
+        Draw the currently established room boundaries in bright blue.
+
+        This is a debugging function useful for determining and adjusting
+        room boundaries in .csv files. It may also be useful in conjunction
+        with the `draw_objects` function in the Room class to determine if
+        the character rect or boundaries are causing movement problems.
 
         Args:
-            screen:
-
-        Returns:
-
+            screen: the screen to draw to
         """
         for rect in self.objects:
             pygame.draw.rect(surface=screen, rect=rect,
@@ -122,6 +138,10 @@ class Room(helpers.DataSprite):
     def is_clear(self):
         """
         Determine if all the criteria to pass a room have been met.
+
+        This function currently only checks that all interactables are in
+        their end state, but in future could also contain other data such as
+        whether NPCs have been collided with.
 
         Returns:
             True if all criteria have been met, False otherwise
@@ -133,7 +153,11 @@ class Room(helpers.DataSprite):
 
     def update(self, screen, player):
         """
+        Update the room drawing, interactables, and npcs.
 
+        Args:
+            screen: The screen to draw to
+            player: The player instance to check for interaction
         """
         super().update(screen)
         # Updates all of the room's interactables
@@ -146,7 +170,20 @@ class Room(helpers.DataSprite):
 
 class Chatbox(pygame.sprite.Sprite):
     """
+    Class representing a textbox for characters to speak. Inherits from Pygame
+    Sprite class.
 
+    Attributes:
+        _surf: the image representing the chatbox
+        _rect: contains the location of the chatbox
+        _phrase: string containing the phrase to be said
+        _index: int representing how many lines are left to say
+        _font: the font to render the text in
+        _sprite: the character speaking
+        _past_phrases: list of phrases (strings) that have already been said.
+            Note this does not store all phrases a character says. It is only
+            used when the method say_once is called to prevent a character
+            repeating things every time an in-game condition is met
     """
     def __init__(self, sprite):
         super().__init__()
@@ -169,7 +206,18 @@ class Chatbox(pygame.sprite.Sprite):
         self._phrase = phrase
 
     def say_once(self, phrase):
+        """
+        Defines a phrase to be said and not repeated.
 
+        This is in contrast to say above. If say is used, the character will
+        repeat the phrase every time the appropriate conditions are met. For
+        instance, if an NPC says something when a character bumps into them,
+        using say() will cause the NPC to say the phrase every time the
+        character bumps into them, while using say_once() will cause the NPC
+        to say the phrase only the first time the character bumps into them.
+        Args:
+            phrase: String containing the phrase to be said
+        """
         if phrase not in self._past_phrases:
             self._phrase = phrase
             self._past_phrases.append(phrase)
@@ -185,11 +233,15 @@ class Chatbox(pygame.sprite.Sprite):
 
     def _process_speech(self, speed):
         """
+        Split the phrase into chunks that will fit in the chatbox.
 
         Args:
-            speed:
+            speed: the speed in ticks that the phrase should scroll in the
+                chatbox.
 
         Returns:
+            a list containing the phrase broken into strings that will fit in
+                the chatbox
 
         """
         self._index += 1
@@ -212,12 +264,13 @@ class Chatbox(pygame.sprite.Sprite):
 
     def update(self, screen):
         """
+        Draw the text and chatbox in the game.
+
+        For long phrases, this will create a scrolling effect as text from the
+        phrase disappears to make space for more
 
         Args:
-            screen:
-
-        Returns:
-
+            screen: the screen to draw to
         """
         # Split the speech into lines that can fit in the chatbox
         processed = textwrap.fill(self._process_speech(0.6), 19).split('\n')
@@ -243,7 +296,16 @@ class Chatbox(pygame.sprite.Sprite):
 
 class Guide(helpers.DataSprite):
     """
+    Class representing the guidebook that assists the player throughout the
+    game. Inherits from DataSprite.
 
+    Attributes:
+        _state: string representing the current state of the guide. Can be
+            'open', 'close', or 'not' (for notification)
+        _font: the font to render the guide text in
+        _lines: list of lines read from a txt file that the guide will display
+        _current_index: int representing the currently displayed line's index
+         in _lines
     """
     def __init__(self):
         """
@@ -261,6 +323,10 @@ class Guide(helpers.DataSprite):
         """
         Special update function for Guide. Update graphic to the current
         state the guide is in
+
+        Args:
+            screen: the screen to draw to
+            player: the instance of Player to check if the guide is in use
         """
         if player.is_guiding():
             self.toggle()
@@ -270,6 +336,12 @@ class Guide(helpers.DataSprite):
             self.display_text(screen)
 
     def get_index(self):
+        """
+        Accessor for _current_index.
+
+        Returns:
+            int representing _current_index
+        """
         return self._current_index
 
     def notification(self):
@@ -288,6 +360,16 @@ class Guide(helpers.DataSprite):
             self._state = 'close'
 
     def update_text(self, idx=''):
+        """
+        Display more lines of the guide and show a notification to the player.
+
+        Args:
+            idx: the index  to update to. Defaults to '', which causes the
+            guide 
+
+        Returns:
+
+        """
         if idx == '':
             self._current_index += 1
             self.notification()
