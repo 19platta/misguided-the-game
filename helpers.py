@@ -82,12 +82,15 @@ class Animator:
             type = self._types[0]
         self._index[type] += 1
         # If the index is out of bounds, it needs to revert to the first image
-        if math.floor(self._index[type]*self._update_speed) >= len(self._images[type]):
+        if math.floor(self._index[type] * self._update_speed) \
+                >= len(self._images[type]):
             self._index[type] = 0
         self._current_type = type
-        # Return the image based on the update speed (a smaller update speed means
-        # it takes more get_next() calls to update the image, so a slower change.
-        return self._images[type][math.floor(self._index[type]*self._update_speed)]
+        # Return the image based on the update speed (a smaller update speed
+        # means it takes more get_next() calls to update the image, so a
+        # slower change
+        return self._images[type][math.floor(
+            self._index[type] * self._update_speed)]
 
     def get_next_folder(self):
         """
@@ -138,7 +141,8 @@ class DataSprite(pygame.sprite.Sprite):
         path = 'Media/' + dir + data + "/" + data + '.csv'
         self._datafile = pandas.read_csv(path, index_col=0)
         self._name = data
-        # Assign the animator path and update speed to a new instance of Animator
+        # Assign the animator path and update speed to a new instance of
+        # Animator
         self._animator = Animator(
             pathname='Media/' + dir + data,
             speed=float(self._datafile.loc['animator', '2']))

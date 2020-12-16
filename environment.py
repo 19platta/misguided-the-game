@@ -60,14 +60,16 @@ class Room(helpers.DataSprite):
         self.objects = []
         for object in self._datafile.loc['objects'].dropna().values.tolist():
             object = [int(obj) for obj in object.split('/')]
-            self.objects.append(pygame.Rect(object[0]+self._rect.left,
-                                            object[1]+self._rect.top,
+            self.objects.append(pygame.Rect(object[0] + self._rect.left,
+                                            object[1] + self._rect.top,
                                             object[2], object[3]))
         # Initializes the room's entrances from the csv
         self.entrances = []
         for object in self._datafile.loc['entrances'].dropna().values.tolist():
             object = [obj for obj in object.split('/')]
-            self.entrances.append([int(object[0]), int(object[1]), str(object[2])])
+            self.entrances.append([int(object[0]),
+                                   int(object[1]),
+                                   str(object[2])])
         # Initializes the room's exits from the csv
         self.exits = []
         for object in self._datafile.loc['exits'].dropna().values.tolist():
@@ -78,9 +80,11 @@ class Room(helpers.DataSprite):
                                str(object[4])])
         # Initializes the room's interactables from the csv
         self.interactables = []
-        for item in self._datafile.loc['interactables'].dropna().values.tolist():
+        for item in self._datafile.loc['interactables'].dropna().values.\
+                tolist():
             item = [i for i in item.split('/')]
-            self.interactables.append(interactables.Interactable(str(item[2]), str(item[3])))
+            self.interactables.append(interactables.Interactable(str(item[2]),
+                                                                 str(item[3])))
             self.interactables[-1].place(int(item[0]), int(item[1]))
         # Initializes the room's npcs from the csv
         self.npcs = []
@@ -133,7 +137,7 @@ class Room(helpers.DataSprite):
         """
         for rect in self.objects:
             pygame.draw.rect(surface=screen, rect=rect,
-                             color=pygame.Color(0,0,255))
+                             color=pygame.Color(0, 0, 255))
 
     def is_clear(self):
         """
@@ -192,7 +196,8 @@ class Chatbox(pygame.sprite.Sprite):
         self._rect = self._surf.get_rect()
         self._phrase = ''
         self._index = 0
-        self._font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf', 15)
+        self._font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf',
+                                      15)
         self._sprite = sprite
         self._past_phrases = []
 
@@ -252,7 +257,7 @@ class Chatbox(pygame.sprite.Sprite):
         # a short delay. The delay is inversely proportional to the length of
         # the phrase.
         elif math.floor(self._index * speed) > len(self._phrase) * \
-                        (1 + 50/(len(self._phrase)+1)):
+                       (1 + 50 / (len(self._phrase) + 1)):
             self._index = 0
             self._phrase = ''
             processed = ''
@@ -281,7 +286,7 @@ class Chatbox(pygame.sprite.Sprite):
             x = self._sprite.get_pos()[0]
             y = self._sprite.get_pos()[1]
             self._rect.centerx = x
-            self._rect.centery = y-130
+            self._rect.centery = y - 130
             # Show the chatbox
             screen.blit(self._surf, self._rect)
             # Display the text. If it's long, show only the last four lines.
@@ -313,7 +318,8 @@ class Guide(helpers.DataSprite):
         """
         super().__init__('guide', 'misc/')
         self._state = 'close'
-        self._font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf', 30)
+        self._font = pygame.font.Font('Media/fonts/iAWriterDuospace-Bold.otf',
+                                      30)
         with open('Media/misc/guide/guide.txt') as f:
             lines = f.readlines()
         self._lines = [line.strip() for line in lines]
@@ -365,10 +371,9 @@ class Guide(helpers.DataSprite):
 
         Args:
             idx: the index  to update to. Defaults to '', which causes the
-            guide 
-
-        Returns:
-
+                guide to add only one more line. If idx is an integer, it
+                represents the index position to update to (NOT the number
+                of lines to add)
         """
         if idx == '':
             self._current_index += 1
@@ -379,31 +384,28 @@ class Guide(helpers.DataSprite):
 
     def display_text(self, screen):
         """
+        Show the text on the guide illustration, such that it doesn't run
+        off the pages and creates breaks between sections.
 
         Args:
-            screen:
-
-        Returns:
-
+            screen: the screen to draw to.
         """
         # Split the speech into lines that can fit in the chatbox
         processed = []
         numlines = 32  # make this even
-        for i in range(min(self._current_index * 2, len(self._lines)-1), -1, -1):
+        for i in range(min(self._current_index * 2, len(self._lines) - 1),
+                       -1, -1):
             next_step = textwrap.fill(self._lines[i], 19).split('\n')
-            if(len(processed) + len(next_step) > numlines):
+            if len(processed) + len(next_step) > numlines:
                 break
             processed = next_step + processed
         # If the phrase length is greater than zero, display the chatbox with
         # the phrase in it
-        for i in range(0, min(numlines//2, len(processed))):
+        for i in range(0, min(numlines // 2, len(processed))):
             # Display the text. If it's long, show only the last four lines.
             # This creates a scrolling effect
             screen.blit(self._font.render(processed[i], True, (0, 0, 0)),
                         (150, 100 + (i * 30)))
-        for j in range(numlines//2, min(numlines, len(processed))):
+        for j in range(numlines // 2, min(numlines, len(processed))):
             screen.blit(self._font.render(processed[j], True, (0, 0, 0)),
-                        (570, 100  + ((j - numlines//2) * 30)))
-
-
-
+                        (570, 100 + ((j - numlines // 2) * 30)))
